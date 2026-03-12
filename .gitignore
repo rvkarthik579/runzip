@@ -1,0 +1,9 @@
+node_modules/
+.env
+data/
+projects/
+uploads/
+release/
+dist-electron/
+*.log
+.DS_Store

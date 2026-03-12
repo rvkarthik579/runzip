@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RunZip — ZIP to Live Web App</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/runzip-favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Departure+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #070708;
+      --bg2:      #0d0d10;
+      --surface:  #111116;
+      --border:   #1c1c23;
+      --border2:  #28282f;
+      --accent:   #00d4ff;
+      --accent-d: #0091ad;
+      --text:     #ececec;
+      --muted:    #5a5a6a;
+      --muted2:   #2e2e38;
+      --r:        14px;
+      --r2:       22px;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* GRAIN */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* GLOW */
+    .glow {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(160px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-1 { width: 700px; height: 700px; background: rgba(0,212,255,0.07); top: -300px; left: 50%; transform: translateX(-50%); }
+    .glow-2 { width: 300px; height: 300px; background: rgba(100,200,255,0.05); bottom: 100px; right: -100px; }
+
+    /* SHELL */
+    .shell {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 28px 60px;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-mark svg { width: 28px; height: 34px; display: block; }
+
+    .nav-logo-text {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .nav-logo-text b { color: #00d4ff; font-weight: 900; }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      font-size: 12px;
+      font-family: 'Departure Mono', monospace;
+      color: var(--muted);
+      transition: all 0.4s;
+    }
+
+    .status-pill.live {
+      border-color: rgba(0,212,255,0.3);
+      color: var(--accent);
+      background: rgba(0,212,255,0.05);
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    .status-pill.live .status-dot { animation: blink 1.4s ease-in-out infinite; }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 40px 0 32px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px 5px 8px;
+      border-radius: 100px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      font-size: 11px;
+      font-family: 'Departure Mono', monospace;
+      color: var(--muted);
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-badge-dot {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: grid; place-items: center;
+    }
+
+    .hero-badge-dot svg { width: 10px; height: 10px; }
+
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 72px);
+      font-weight: 900;
+      letter-spacing: -3px;
+      line-height: 0.95;
+      color: var(--text);
+      margin-bottom: 22px;
+    }
+
+    .hero h1 .line2 {
+      display: block;
+      color: var(--accent);
+      -webkit-text-stroke: 0px;
+    }
+
+    .hero h1 .outline {
+      -webkit-text-stroke: 1.5px rgba(236,236,236,0.25);
+      color: transparent;
+    }
+
+    .trust-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      padding: 8px;
+    }
+
+    .trust-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #00d4ff;
+      font-family: 'Departure Mono', monospace;
+      padding: 10px 20px;
+      border-radius: 100px;
+      background: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.18);
+    }
+
+    .trust-item::before {
+      content: '\2713';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #00d4ff;
+      color: #070708;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 440px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+      font-weight: 400;
+    }
+
+    /* MAIN STAGE */
+    .stage {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .stage { grid-template-columns: 1fr; }
+    }
+
+    /* UPLOAD CARD */
+    .upload-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .upload-card.file-ready {
+      border-color: rgba(0, 212, 255, 0.3);
+      box-shadow: 0 0 40px rgba(0, 212, 255, 0.08);
+    }
+
+    .upload-card-inner { padding: 24px; }
+
+    /* DROPZONE */
+    .dropzone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 220px;
+      border: 1.5px dashed var(--border2);
+      border-radius: var(--r);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+      padding: 40px 20px;
+      text-align: center;
+      background: rgba(255,255,255,0.01);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dropzone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.06) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .dropzone:hover::before, .dropzone.drag-over::before { opacity: 1; }
+
+    .dropzone:hover, .dropzone.drag-over {
+      border-color: rgba(0,212,255,0.5);
+      background: rgba(0,212,255,0.03);
+    }
+
+    .dropzone.drag-over .dz-icon { transform: translateY(-6px) scale(1.1); }
+
+    .dz-icon {
+      width: 64px; height: 64px;
+      border-radius: 14px;
+      background: var(--border);
+      border: 1px solid var(--border2);
+      display: grid; place-items: center;
+      color: var(--muted);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .dz-icon svg { width: 26px; height: 26px; }
+
+    .dz-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .dz-sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'Departure Mono', monospace;
+    }
+
+    /* FILE SELECTED STATE */
+    .file-selected {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      background: rgba(0,212,255,0.06);
+      border: 1px solid rgba(0,212,255,0.18);
+      border-radius: 10px;
+      margin-top: 14px;
+    }
+
+    .file-selected.show { display: flex; animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .file-selected-icon {
+      width: 32px; height: 32px;
+      background: rgba(0,212,255,0.12);
+      border-radius: 7px;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+      color: var(--accent);
+    }
+
+    .file-selected-icon svg { width: 16px; height: 16px; }
+
+    .file-selected-info { flex: 1; min-width: 0; }
+
+    .file-selected-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-selected-size {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'Departure Mono', monospace;
+    }
+
+    /* UPLOAD BTN */
+    .btn-primary {
+      width: 100%;
+      margin-top: 16px;
+      padding: 18px;
+      background: var(--accent);
+      color: #070708;
+      border: none;
+      border-radius: var(--r);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: -0.2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #d9ff1a;
+      box-shadow: 0 0 40px rgba(0,212,255,0.3), 0 4px 16px rgba(0,212,255,0.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-primary.uploading {
+      color: transparent;
+    }
+
+    .btn-primary.uploading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+      animation: sweep 1s infinite;
+    }
+
+    .btn-primary.uploading::before {
+      content: 'Uploading…';
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #070708;
+      font-weight: 800;
+    }
+
+    @keyframes sweep {
+      from { transform: translateX(-100%); }
+      to   { transform: translateX(100%); }
+    }
+
+    /* DIVIDER */
+    .hdivider {
+      height: 1px;
+      background: var(--border);
+      margin: 22px 0;
+    }
+
+    /* RESULT */
+    .result {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .result.show {
+      display: flex;
+      animation: slideUp 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: 'Departure Mono', monospace;
+    }
+
+    /* URL ROW */
+    .url-row { display: flex; gap: 8px; }
+
+    .url-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'Departure Mono', monospace;
+      font-size: 11px;
+      color: var(--text);
+      outline: none;
+      min-width: 0;
+      transition: border-color 0.2s;
+    }
+
+    .url-input:focus { border-color: rgba(0,212,255,0.4); }
+
+    .btn-ghost {
+      padding: 10px 16px;
+      background: var(--border);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: rgba(0,212,255,0.4);
+      color: var(--accent);
+      background: rgba(0,212,255,0.06);
+    }
+
+    .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* QR HERO BLOCK */
+    .qr-hero {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding: 18px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qr-hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      background: rgba(0,212,255,0.06);
+      border-radius: 50%;
+      filter: blur(30px);
+    }
+
+    .qr-img-wrap {
+      width: 130px; height: 130px;
+      background: white;
+      border-radius: 10px;
+      padding: 5px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 30px rgba(0,212,255,0.2);
+    }
+
+    .qr-img-wrap img {
+      width: 100%; height: 100%;
+      border-radius: 6px;
+      display: block;
+    }
+
+    .qr-text { flex: 1; min-width: 0; }
+
+    .qr-text-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .qr-text-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .btn-open {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--text);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-open:hover:not(:disabled) {
+      border-color: rgba(100,200,255,0.4);
+      color: #64c8ff;
+    }
+
+    .btn-open:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-open svg { width: 12px; height: 12px; }
+
+    .btn-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(0,212,255,0.12);
+      color: #00d4ff;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-play:hover:not(:disabled) {
+      background: rgba(0,212,255,0.22);
+    }
+
+    .btn-play:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* META CHIPS */
+    .meta-row { display: flex; gap: 8px; }
+
+    .meta-chip {
+      flex: 1;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .meta-chip-label {
+      font-size: 9px;
+      font-family: 'Departure Mono', monospace;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .meta-chip-val {
+      font-size: 11px;
+      font-family: 'Departure Mono', monospace;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* PREVIEW CARD */
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r2);
+      overflow: hidden;
+      position: sticky;
+      top: 20px;
+    }
+
+    .preview-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    /* BROWSER DOTS */
+    .browser-dots { display: flex; gap: 6px; align-items: center; }
+    .bdot { width: 10px; height: 10px; border-radius: 50%; }
+    .bdot-r { background: #ff5f57; }
+    .bdot-y { background: #febc2e; }
+    .bdot-g { background: #28c840; }
+
+    /* MODE TOGGLE */
+    .mode-toggle {
+      display: flex;
+      background: var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .mode-btn {
+      padding: 5px 13px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: var(--border2);
+      color: var(--text);
+    }
+
+    /* PREVIEW STAGE */
+    .preview-stage {
+      position: relative;
+      min-height: 500px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 20px;
+      background: #050506;
+    }
+
+    /* EMPTY STATE */
+    .preview-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .preview-empty-ring {
+      width: 72px; height: 72px;
+      border-radius: 18px;
+      border: 1.5px dashed var(--border2);
+      display: grid; place-items: center;
+      color: var(--muted2);
+    }
+
+    .preview-empty-ring svg { width: 28px; height: 28px; }
+
+    .preview-empty p {
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'Departure Mono', monospace;
+    }
+
+    /* IFRAME DEVICE */
+    .iframe-device-wrap {
+      width: 100%;
+      display: none;
+      justify-content: center;
+    }
+
+    .iframe-device-wrap.show { display: flex; animation: fadeIn 0.4s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .iframe-device {
+      background: #111;
+      border-radius: 12px;
+      border: 1.5px solid var(--border2);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+      transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+      width: 100%;
+    }
+
+    .iframe-device.tablet {
+      width: 480px;
+      min-height: 640px;
+      border-radius: 24px;
+      border: 6px solid #2a2a3a;
+      background: #0f0f16;
+      padding: 12px 12px 22px;
+    }
+
+    .iframe-device.phone {
+      width: 320px;
+      min-height: 620px;
+      border-radius: 36px;
+      border: 6px solid #2a2a3a;
+      background: #0f0f16;
+      padding: 28px 10px 22px;
+    }
+
+    .iframe-chrome {
+      height: 32px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+
+    .iframe-device.tablet .iframe-chrome,
+    .iframe-device.phone .iframe-chrome {
+      display: none;
+    }
+
+    .device-notch,
+    .device-homebar {
+      display: none;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .iframe-device.phone .device-notch {
+      display: block;
+      top: 0;
+      width: 80px;
+      height: 20px;
+      border-radius: 0 0 12px 12px;
+      background: #1a1a22;
+    }
+
+    .iframe-device.tablet .device-homebar,
+    .iframe-device.phone .device-homebar {
+      display: block;
+      bottom: 8px;
+      width: 40px;
+      height: 4px;
+      border-radius: 999px;
+      background: #3a3a4a;
+    }
+
+    .preview-frame {
+      width: 100%;
+      min-height: 460px;
+      border: none;
+      display: block;
+      background: white;
+    }
+
+    .iframe-device.tablet .preview-frame {
+      min-height: 580px;
+      border-radius: 16px;
+    }
+
+    .iframe-device.phone .preview-frame {
+      min-height: 560px;
+      border-radius: 26px;
+    }
+
+    /* LOADING SPINNER OVERLAY */
+    .frame-loader {
+      display: none;
+      position: absolute;
+      inset: 52px 0 0;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      background: #050506;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: 'Departure Mono', monospace;
+    }
+
+    .iframe-device.tablet .frame-loader,
+    .iframe-device.phone .frame-loader {
+      inset: 0;
+      border-radius: inherit;
+    }
+
+    .frame-loader.show { display: flex; }
+
+    .spin {
+      width: 30px; height: 30px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* TIPS BAR */
+    .tips-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg2);
+    }
+
+    .tip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'Departure Mono', monospace;
+    }
+
+    .tip::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--text);
+      color: var(--bg);
+      padding: 11px 22px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 700;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 9998;
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+
+  <div class="shell">
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">
+        <div class="nav-logo-mark">
+          <svg width="28" height="34" viewBox="0 0 28 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 4C2 2.9 2.9 2 4 2H18L26 10V30C26 31.1 25.1 32 24 32H4C2.9 32 2 31.1 2 30V4Z" fill="#111116" stroke="#00d4ff" stroke-width="1.5"/>
+            <path d="M18 2L18 10H26" stroke="#00d4ff" stroke-width="1.5" stroke-linejoin="round"/>
+            <text x="7" y="24" font-family="monospace" font-size="9" font-weight="bold" fill="#00d4ff" letter-spacing="0.5">ZIP</text>
+          </svg>
+        </div>
+        <span class="nav-logo-text">Run<b>Zip</b></span>
+      </div>
+      <div class="status-pill" id="saveStatus">
+        <div class="status-dot"></div>
+        <span id="statusText">Waiting for ZIP</span>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">
+        <div class="hero-badge-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#070708" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        ZIP → Live URL in seconds
+      </div>
+      <h1>
+        Drop a ZIP.<br/>
+        <span class="line2">Run it anywhere.</span>
+      </h1>
+      <p class="hero-sub">Upload any static web project. RunZip hosts it instantly and gives you a shareable link + QR code.</p>
+    </section>
+
+    <div class="trust-bar">
+      <div class="trust-item">✓ No login required</div>
+      <div class="trust-item">✓ No account needed</div>
+      <div class="trust-item">✓ Auto-deleted in 24h</div>
+      <div class="trust-item">✓ Free forever</div>
+      <div class="trust-item">✓ Works on any device</div>
+    </div>
+
+    <!-- STAGE -->
+    <div class="stage">
+
+      <!-- LEFT: UPLOAD -->
+      <div class="upload-card">
+        <div class="upload-card-inner">
+
+          <label class="dropzone" id="dropzone" for="zipInput">
+            <input id="zipInput" type="file" accept=".zip,application/zip" hidden />
+            <div class="dz-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <div class="dz-title">Drop your ZIP here</div>
+            <div class="dz-sub">click to browse · max 10MB</div>
+          </label>
+
+          <div class="file-selected" id="fileBadge">
+            <div class="file-selected-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/>
+                <polyline points="13 2 13 9 20 9"/>
+              </svg>
+            </div>
+            <div class="file-selected-info">
+              <div class="file-selected-name" id="fileBadgeName">file.zip</div>
+              <div class="file-selected-size" id="fileBadgeSize">0 MB</div>
+            </div>
+          </div>
+
+          <button id="uploadBtn" class="btn-primary">Upload ZIP</button>
+
+          <div class="hdivider"></div>
+
+          <!-- RESULT -->
+          <div class="result" id="resultSection">
+
+            <div class="section-label">Share</div>
+
+            <div class="url-row">
+              <input id="shareUrlInput" class="url-input" type="text" readonly placeholder="Link appears here…" />
+              <button id="copyLinkBtn" class="btn-ghost" disabled>Copy</button>
+            </div>
+
+            <div class="qr-hero" id="qrBlock" style="display:none">
+              <div class="qr-img-wrap">
+                <img id="qrImage" alt="QR code" />
+              </div>
+              <div class="qr-text">
+                <div class="qr-text-title">Scan to open on phone</div>
+                <div class="qr-text-sub">Point your camera at the QR code to open instantly on any device.</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+                  <button id="openFullBtn" class="btn-open" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12">
+                      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    Open Full Project
+                  </button>
+                  <button id="playBtn" class="btn-play" disabled>▶ Play in New Tab</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="meta-row">
+              <div class="meta-chip">
+                <div class="meta-chip-label">Project ID</div>
+                <div class="meta-chip-val" id="projectIdValue">—</div>
+              </div>
+              <div class="meta-chip">
+                <div class="meta-chip-label">Status</div>
+                <div class="meta-chip-val" id="metaStatus">—</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW -->
+      <div class="preview-card">
+        <div class="preview-topbar">
+          <div></div>
+          <div class="mode-toggle" id="modeToggle">
+            <button type="button" class="mode-btn active" data-mode="desktop">Desktop</button>
+            <button type="button" class="mode-btn" data-mode="tablet">Tablet</button>
+            <button type="button" class="mode-btn" data-mode="phone">Phone</button>
+          </div>
+          <div id="viewerCount" style="display:none; align-items:center; gap:6px; font-size:11px; font-family:'Departure Mono',monospace; color:#5a5a6a; padding:5px 12px; background:#0d0d10; border:1px solid #1c1c23; border-radius:100px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:#00d4ff;animation:blink 1.4s infinite;"></div>
+            <span id="viewerText">1 viewer</span>
+          </div>
+        </div>
+
+        <div class="preview-stage" id="previewStage">
+          <div class="preview-empty" id="previewEmpty">
+            <div class="preview-empty-ring">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <p>Upload a ZIP to preview</p>
+          </div>
+
+          <div class="iframe-device-wrap" id="iframeOuter">
+            <div class="iframe-device desktop" id="iframeWrap">
+              <div class="device-notch" aria-hidden="true"></div>
+              <div class="iframe-chrome">
+              </div>
+              <div class="frame-loader" id="frameLoading">
+                <div class="spin"></div>
+                <span>Loading preview…</span>
+              </div>
+              <iframe
+                id="previewFrame"
+                class="preview-frame"
+                title="Project preview"
+                loading="eager"
+                tabindex="0"
+                allow="autoplay; gamepad; keyboard-map; pointer-lock"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups"
+              ></iframe>
+              <div class="device-homebar" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tips-bar">
+          <span class="tip">.zip only</span>
+          <span class="tip">needs index.html</span>
+          <span class="tip">max 10MB</span>
+          <span class="tip">expires in 24h</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>
+

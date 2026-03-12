@@ -1,0 +1,66 @@
+{
+  "name": "runzip",
+  "version": "1.0.0",
+  "description": "Upload ZIP web projects, preview instantly, and share runnable links with QR.",
+  "main": "electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "desktop": "electron .",
+    "dist": "electron-builder -mwl",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg",
+    "dist:linux": "electron-builder --linux AppImage"
+  },
+  "keywords": [
+    "project-sharing",
+    "express",
+    "zip-upload",
+    "web-hosting",
+    "qrcode"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^2.0.2",
+    "nanoid": "^5.1.5",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.3",
+    "unzipper": "^0.12.3"
+  },
+  "devDependencies": {
+    "electron": "^35.1.4",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.runzip.desktop",
+    "productName": "RunZip",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "public/**/*",
+      "src/**/*",
+      "data/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    }
+  }
+}
