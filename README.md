@@ -1,144 +1,60 @@
-# RunZip
+# RunZip ⚡
 
-RunZip is a simple platform where users upload a ZIP containing a static web project
-(HTML, CSS, JS), preview it instantly, and get a shareable link plus QR code to run the project on any device.
+Upload a ZIP. Get a live URL + QR code instantly. No login required.
 
-## What It Does
+[🚀 Try it live →](https://runzip-production.up.railway.app/)
 
-- Upload ZIP files up to 10MB
-- Extract ZIP contents safely into `projects/{projectId}`
-- Detect entry HTML using priority:
-	`index.html` -> `dist/index.html` -> `build/index.html` -> `public/index.html` -> `src/index.html` -> first other `.html`
-- Host the detected project at `/p/{projectId}`
-- Show live preview with Desktop / Tablet / Mobile frame modes
-- Open projects directly in a new tab via "Open Full Project"
-- Generate QR code for the share link
-- Run automatic cleanup: remove uploaded project folders older than 24 hours
-- Keep legacy text project APIs available (`/api/projects`)
+## What is RunZip?
 
-## Security
+RunZip is a free tool that lets you share any static web project instantly. Drop a ZIP file, get a shareable link and QR code in seconds.
 
-- ZIP path traversal is blocked during extraction
-- Hosted files are served only from the `/projects` directory
-- Upload size is limited to 10MB
-- RunZip injects `<base href="./">` into HTML that has no `<base>` tag to improve relative asset loading
+**Perfect for:**
+- Showing a client your work without deploying
+- Testing your site on a phone instantly
+- Sharing a project with a friend or teacher
+- Demoing a game or app live
 
-## Share URL and QR Behavior
+## Features
 
-- If `BASE_URL` is set, RunZip uses it for share links and QR codes.
-- If `BASE_URL` is not set, RunZip uses the incoming request host.
+- ⚡ **Instant hosting** — live URL in under 3 seconds
+- 📱 **QR code** — scan to open on any phone immediately
+- 🖥️ **Device preview** — Desktop, Tablet, Phone modes
+- 🔒 **No login** — zero friction, no account needed
+- 🗑️ **Auto-delete** — files removed after 24 hours
+- 🎮 **Game support** — Play in New Tab button for games
+- 🌐 **Share page** — beautiful branded page for every link
+- 💻 **Desktop app** — installable Windows app available
 
-Example:
+## How It Works
 
-`BASE_URL=http://192.168.1.42:4000`
-
-This is recommended for phone testing on local network.
-
-## API
-
-### Health
-
-`GET /api/health`
-
-### Upload ZIP
-
-`POST /api/uploads/zip`
-
-Multipart form-data:
-
-- `projectZip`: ZIP file (required, max 10MB)
-
-Success response:
-
-- `project.id`
-- `project.shareUrl` (example: `http://localhost:4000/p/abc123`)
-- `project.previewUrl`
-- `qrCodeDataUrl`
-
-### Hosted Project
-
-`GET /p/:projectId`
-
-Opens the uploaded project in browser.
-
-### Friendly Upload Error
-
-If no HTML file exists anywhere in the ZIP, RunZip returns:
-
-`We couldn't find an index.html file in your project. Please upload a web project containing an index.html file.`
+1. ZIP your static web project
+2. Drop it on RunZip
+3. Get a live URL + QR code instantly
+4. Share with anyone — they open it in any browser, no install needed
 
 ## Run Locally
 
 ```bash
+git clone https://github.com/rvkarthik579/runzip.git
+cd runzip
 npm install
 npm start
 ```
 
-Then open:
+Open http://localhost:4000
 
-`http://localhost:4000`
+## Tech Stack
 
-RunZip listens on `0.0.0.0`, so devices on your LAN can open:
+- **Backend** — Node.js, Express
+- **File handling** — Multer, Unzipper
+- **QR generation** — qrcode
+- **Frontend** — Vanilla JS, CSS
+- **Desktop** — Electron
 
-`http://<your-local-ip>:4000`
+## Deploy
 
-## Run As Desktop App (Electron)
+Live at: [https://runzip-production.up.railway.app/](https://runzip-production.up.railway.app/)
 
-RunZip can now launch as a native desktop window that automatically starts the Express backend in the background.
+## License
 
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start desktop app:
-
-```bash
-npm run desktop
-```
-
-This opens a native RunZip window and loads the app UI from the local backend.
-
-## Build Installers
-
-Build all targets configured in Electron Builder:
-
-```bash
-npm run dist
-```
-
-Build per platform:
-
-```bash
-npm run dist:win
-npm run dist:mac
-npm run dist:linux
-```
-
-Output artifacts are written to the `release` folder.
-
-Notes:
-
-- `dist:win` creates an NSIS installer (`.exe`).
-- `dist:mac` creates a DMG installer.
-- `dist:linux` creates an AppImage.
-- Building macOS installers is typically done on macOS.
-
-## Environment
-
-Copy `.env.example` to `.env` if needed:
-
-```bash
-PORT=4000
-BASE_URL=http://localhost:4000
-```
-
-`BASE_URL` is optional. If not provided, share links use the incoming host.
-
-## Legacy Endpoints (Still Available)
-
-- `POST /api/projects`
-- `GET /api/projects/:projectId?token=<shareToken>`
-- `PUT /api/projects/:projectId?token=<shareToken>`
-- `GET /api/share/:projectId/:shareToken`
+MIT
