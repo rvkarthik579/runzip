@@ -24,28 +24,37 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #070708;
-      --bg2:      #0d0d10;
-      --surface:  #111116;
-      --border:   #1c1c23;
-      --border2:  #28282f;
-      --accent:   #00d4ff;
-      --accent-d: #0091ad;
-      --text:     #ececec;
-      --muted:    #5a5a6a;
-      --muted2:   #2e2e38;
+      --bg:       #0f172a;
+      --bg2:      #1a234a;
+      --surface:  #1e293b;
+      --border:   #334155;
+      --border2:  #475569;
+      --accent:   #7c3aed;
+      --accent2:  #10b981;
+      --accent-d: #6d28d9;
+      --text:     #f1f5f9;
+      --muted:    #94a3b8;
+      --muted2:   #64748b;
       --r:        14px;
       --r2:       22px;
     }
 
     html, body {
       min-height: 100%;
-      background: var(--bg);
+      background: linear-gradient(-45deg, #0f172a, #1e293b, #1a1f3a, #0f172a);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
       color: var(--text);
       font-family: 'Cabinet Grotesk', sans-serif;
       font-size: 15px;
       line-height: 1.5;
       overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     /* GRAIN */
@@ -66,8 +75,8 @@
       pointer-events: none;
       z-index: 0;
     }
-    .glow-1 { width: 700px; height: 700px; background: rgba(0,212,255,0.07); top: -300px; left: 50%; transform: translateX(-50%); }
-    .glow-2 { width: 300px; height: 300px; background: rgba(100,200,255,0.05); bottom: 100px; right: -100px; }
+    .glow-1 { width: 700px; height: 700px; background: rgba(124, 58, 237, 0.1); top: -300px; left: 50%; transform: translateX(-50%); }
+    .glow-2 { width: 300px; height: 300px; background: rgba(16, 185, 129, 0.08); bottom: 100px; right: -100px; }
 
     /* SHELL */
     .shell {
@@ -81,60 +90,95 @@
 
     /* NAV */
     nav {
-      position: relative;
-      display: flex;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      justify-content: center;
+      gap: 12px;
       padding: 22px 0;
       border-bottom: 1px solid var(--border);
       margin-bottom: 0;
+    }
+
+    .top-nav-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .top-nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      font-family: 'Departure Mono', monospace;
+      font-weight: 700;
+      transition: all 0.2s, border-bottom-color 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .top-nav-link:hover {
+      color: var(--accent);
+      border-color: rgba(124, 58, 237, 0.5);
+      background: rgba(124, 58, 237, 0.08);
+      border-bottom-color: var(--accent);
     }
 
     .top-upload-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: min(760px, calc(100% - 190px));
-      min-height: 56px;
-      border: 1px solid rgba(0, 212, 255, 0.45);
+      width: min(760px, 100%);
+      min-height: 62px;
+      border: 1px solid rgba(124, 58, 237, 0.5);
       border-radius: 14px;
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(0, 212, 255, 0.13));
-      color: #c5f5ff;
-      font-size: 18px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(16, 185, 129, 0.15));
+      color: #c4d7ee;
+      font-size: 20px;
       font-weight: 900;
       letter-spacing: -0.2px;
       text-decoration: none;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: 0 10px 28px rgba(124, 58, 237, 0.24);
     }
 
     .top-upload-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 32px rgba(0, 212, 255, 0.2);
-      border-color: rgba(0, 212, 255, 0.75);
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 14px 42px rgba(124, 58, 237, 0.4);
+      border-color: rgba(124, 58, 237, 0.8);
     }
 
     .status-pill {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
       display: flex;
       align-items: center;
       gap: 7px;
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 100px;
       border: 1px solid var(--border2);
       background: var(--surface);
-      font-size: 12px;
+      font-size: 11px;
       font-family: 'Departure Mono', monospace;
       color: var(--muted);
       transition: all 0.4s;
     }
 
     .status-pill.live {
-      border-color: rgba(0,212,255,0.3);
+      border-color: rgba(124, 58, 237, 0.3);
       color: var(--accent);
-      background: rgba(0,212,255,0.05);
+      background: rgba(124, 58, 237, 0.05);
+    }
+
+    .status-pill.active {
+      border-color: rgba(124, 58, 237, 0.3);
+      color: var(--accent);
+      background: rgba(124, 58, 237, 0.05);
     }
 
     .status-dot {
@@ -144,7 +188,8 @@
       flex-shrink: 0;
     }
 
-    .status-pill.live .status-dot { animation: blink 1.4s ease-in-out infinite; }
+    .status-pill.live .status-dot,
+    .status-pill.active .status-dot { animation: blink 1.4s ease-in-out infinite; }
 
     @keyframes blink {
       0%,100% { opacity: 1; transform: scale(1); }
@@ -154,7 +199,19 @@
     /* HERO */
     .hero {
       text-align: center;
-      padding: 40px 0 32px;
+      padding: 34px 0 16px;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle 600px at center, rgba(124, 58, 237, 0.15), transparent 70%);
+      border-radius: 50%;
+      blur-filter: blur(40px);
+      pointer-events: none;
+      z-index: -1;
     }
 
     .hero-badge {
@@ -163,8 +220,9 @@
       gap: 7px;
       padding: 5px 14px 5px 8px;
       border-radius: 100px;
-      border: 1px solid var(--border2);
-      background: var(--surface);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      background: rgba(124, 58, 237, 0.08);
+      backdrop-filter: blur(10px);
       font-size: 11px;
       font-family: 'Departure Mono', monospace;
       color: var(--muted);
@@ -182,61 +240,81 @@
     .hero-badge-dot svg { width: 10px; height: 10px; }
 
     .hero h1 {
-      font-size: clamp(36px, 5vw, 72px);
+      font-size: clamp(48px, 7vw, 64px);
       font-weight: 900;
-      letter-spacing: -3px;
-      line-height: 0.95;
+      letter-spacing: -2.6px;
+      line-height: 0.96;
       color: var(--text);
-      margin-bottom: 22px;
+      margin-bottom: 16px;
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .hero h1 .line1,
+    .hero h1 .line2 {
+      display: block;
+      font-weight: 900;
+    }
+
+    .hero h1 .line1 strong {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
     }
 
     .hero h1 .line2 {
-      display: block;
-      color: var(--accent);
-      -webkit-text-stroke: 0px;
-    }
-
-    .hero h1 .outline {
-      -webkit-text-stroke: 1.5px rgba(236,236,236,0.25);
-      color: transparent;
+      background: linear-gradient(135deg, #7c3aed 0%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .trust-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      flex-wrap: wrap;
       margin-bottom: 32px;
-      padding: 8px;
+      padding: 0;
     }
 
     .trust-item {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
-      color: #00d4ff;
+      color: var(--text);
       font-family: 'Departure Mono', monospace;
-      padding: 10px 20px;
-      border-radius: 100px;
-      background: var(--surface);
-      border: 1px solid rgba(0, 212, 255, 0.18);
+      min-height: 48px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1);
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
     }
 
-    .trust-item::before {
-      content: '\2713';
+    .trust-item:hover {
+      transform: scale(1.05);
+      border-color: var(--accent2);
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .trust-icon {
       width: 18px;
       height: 18px;
-      border-radius: 50%;
+      border-radius: 7px;
       display: grid;
       place-items: center;
-      background: #00d4ff;
-      color: #070708;
-      font-size: 12px;
+      background: var(--accent2);
+      color: white;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-family: 'Cabinet Grotesk', sans-serif;
       font-weight: 900;
-      line-height: 1;
+    }
+
+    .trust-label {
+      line-height: 1.3;
     }
 
     .how-it-works {
@@ -246,6 +324,7 @@
       gap: 12px;
       margin-bottom: 36px;
       flex-wrap: wrap;
+      row-gap: 14px;
     }
 
     .hiw-step {
@@ -253,9 +332,17 @@
       align-items: center;
       gap: 12px;
       padding: 14px 20px;
-      background: var(--surface);
+      background: rgba(30, 41, 59, 0.8);
       border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
       border-radius: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .hiw-step:hover {
+      border-left-color: var(--accent2);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
+      transform: translateY(-2px);
     }
 
     .hiw-num {
@@ -285,16 +372,32 @@
     }
 
     .hiw-arrow {
-      font-size: 20px;
-      color: var(--muted);
-      font-weight: 900;
+      width: 22px;
+      height: 22px;
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      animation: pulseArrow 2s ease-in-out infinite;
+    }
+
+    .hiw-arrow svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.5));
+    }
+
+    @keyframes pulseArrow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
     }
 
     .hero-sub {
       font-size: 17px;
       color: var(--muted);
       max-width: 440px;
-      margin: 0 auto 40px;
+      margin: 0 auto 18px;
       line-height: 1.65;
       font-weight: 400;
     }
@@ -302,30 +405,51 @@
     /* MAIN STAGE */
     .stage {
       display: grid;
-      grid-template-columns: 420px 1fr;
-      gap: 12px;
+      grid-template-columns: 1fr;
+      gap: 16px;
       align-items: start;
+      max-width: 980px;
+      margin: 0 auto;
     }
 
     @media (max-width: 960px) {
-      .stage { grid-template-columns: 1fr; }
-
       nav {
-        justify-content: flex-start;
+        grid-template-columns: 1fr;
       }
 
       .top-upload-btn {
         width: 100%;
       }
 
+      .top-nav-links {
+        justify-content: center;
+      }
+
       .status-pill {
-        position: static;
-        transform: none;
-        margin-left: 12px;
+        justify-self: center;
       }
 
       .hiw-arrow {
-        display: none;
+        transform: rotate(90deg);
+      }
+
+      .trust-bar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .how-it-works {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .hiw-step {
+        width: 100%;
+      }
+
+      .trust-bar {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -337,11 +461,12 @@
       overflow: hidden;
       position: relative;
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
     }
 
     .upload-card.file-ready {
-      border-color: rgba(0, 212, 255, 0.3);
-      box-shadow: 0 0 40px rgba(0, 212, 255, 0.08);
+      border-color: rgba(124, 58, 237, 0.3);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.1);
     }
 
     .upload-card-inner { padding: 24px; }
@@ -353,14 +478,14 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      min-height: 220px;
-      border: 1.5px dashed var(--border2);
+      min-height: 260px;
+      border: 2px dashed var(--accent);
       border-radius: var(--r);
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
       padding: 40px 20px;
       text-align: center;
-      background: rgba(255,255,255,0.01);
+      background: rgba(124, 58, 237, 0.05);
       position: relative;
       overflow: hidden;
     }
@@ -369,31 +494,49 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.06) 0%, transparent 70%);
+      background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
       opacity: 0;
       transition: opacity 0.3s;
     }
 
-    .dropzone:hover::before, .dropzone.drag-over::before { opacity: 1; }
-
-    .dropzone:hover, .dropzone.drag-over {
-      border-color: rgba(0,212,255,0.5);
-      background: rgba(0,212,255,0.03);
+    .dropzone:hover::before, .dropzone.drag-over::before { 
+      opacity: 1;
+      background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
     }
 
-    .dropzone.drag-over .dz-icon { transform: translateY(-6px) scale(1.1); }
+    .dropzone:hover, .dropzone.drag-over {
+      border-color: var(--accent2);
+      border-style: solid;
+      background: rgba(16, 185, 129, 0.08);
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+    }
+
+    .dropzone.drag-over .dz-icon { transform: translateY(-8px) scale(1.1); }
 
     .dz-icon {
       width: 64px; height: 64px;
       border-radius: 14px;
-      background: var(--border);
-      border: 1px solid var(--border2);
+      background: var(--accent);
+      border: 1px solid rgba(124, 58, 237, 0.5);
       display: grid; place-items: center;
-      color: var(--muted);
+      color: white;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
 
-    .dz-icon svg { width: 26px; height: 26px; }
+    .dz-icon svg {
+      width: 26px;
+      height: 26px;
+      stroke: currentColor;
+    }
+
+    .dropzone:hover .dz-icon {
+      animation: bounce 0.6s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(-8px) scale(1.1); }
+      50% { transform: translateY(-14px) scale(1.15); }
+    }
 
     .dz-title {
       font-size: 16px;
@@ -414,8 +557,8 @@
       align-items: center;
       gap: 10px;
       padding: 11px 14px;
-      background: rgba(0,212,255,0.06);
-      border: 1px solid rgba(0,212,255,0.18);
+      background: rgba(124, 58, 237, 0.06);
+      border: 1px solid rgba(124, 58, 237, 0.2);
       border-radius: 10px;
       margin-top: 14px;
     }
@@ -429,16 +572,12 @@
 
     .file-selected-icon {
       width: 32px; height: 32px;
-      background: rgba(0,212,255,0.12);
+      background: rgba(124, 58, 237, 0.15);
       border-radius: 7px;
       display: grid; place-items: center;
       flex-shrink: 0;
       color: var(--accent);
     }
-
-    .file-selected-icon svg { width: 16px; height: 16px; }
-
-    .file-selected-info { flex: 1; min-width: 0; }
 
     .file-selected-name {
       font-size: 13px;
@@ -459,28 +598,31 @@
     .btn-primary {
       width: 100%;
       margin-top: 16px;
-      padding: 18px;
-      background: var(--accent);
-      color: #070708;
+      min-height: 56px;
+      padding: 20px;
+      background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+      color: white;
       border: none;
-      border-radius: var(--r);
+      border-radius: 16px;
       font-family: 'Cabinet Grotesk', sans-serif;
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 900;
       letter-spacing: -0.2px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 0 30px rgba(124, 58, 237, 0.6);
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: #d9ff1a;
-      box-shadow: 0 0 40px rgba(0,212,255,0.3), 0 4px 16px rgba(0,212,255,0.2);
-      transform: translateY(-1px);
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+      transform: scale(1.05);
     }
 
-    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary:active:not(:disabled) { 
+      transform: scale(0.98);
+    }
 
     .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
 
@@ -492,7 +634,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
       animation: sweep 1s infinite;
     }
 
@@ -561,7 +703,7 @@
       transition: border-color 0.2s;
     }
 
-    .url-input:focus { border-color: rgba(0,212,255,0.4); }
+    .url-input:focus { border-color: rgba(124, 58, 237, 0.5); }
 
     .btn-ghost {
       padding: 10px 16px;
@@ -579,9 +721,9 @@
     }
 
     .btn-ghost:hover:not(:disabled) {
-      border-color: rgba(0,212,255,0.4);
+      border-color: rgba(124, 58, 237, 0.4);
       color: var(--accent);
-      background: rgba(0,212,255,0.06);
+      background: rgba(124, 58, 237, 0.08);
     }
 
     .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -604,7 +746,7 @@
       position: absolute;
       top: -40px; right: -40px;
       width: 120px; height: 120px;
-      background: rgba(0,212,255,0.06);
+      background: rgba(124, 58, 237, 0.1);
       border-radius: 50%;
       filter: blur(30px);
     }
@@ -615,7 +757,7 @@
       border-radius: 10px;
       padding: 5px;
       flex-shrink: 0;
-      box-shadow: 0 4px 30px rgba(0,212,255,0.2);
+      box-shadow: 0 4px 30px rgba(124, 58, 237, 0.25);
     }
 
     .qr-img-wrap img {
@@ -657,8 +799,9 @@
     }
 
     .btn-open:hover:not(:disabled) {
-      border-color: rgba(100,200,255,0.4);
-      color: #64c8ff;
+      border-color: rgba(124, 58, 237, 0.5);
+      color: var(--accent);
+      background: rgba(124, 58, 237, 0.08);
     }
 
     .btn-open:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -671,8 +814,8 @@
       padding: 8px 14px;
       border-radius: 8px;
       border: none;
-      background: rgba(0,212,255,0.12);
-      color: #00d4ff;
+      background: var(--accent2);
+      color: white;
       font-family: 'Cabinet Grotesk', sans-serif;
       font-size: 12px;
       font-weight: 700;
@@ -681,7 +824,8 @@
     }
 
     .btn-play:hover:not(:disabled) {
-      background: rgba(0,212,255,0.22);
+      background: #059669;
+      transform: scale(1.05);
     }
 
     .btn-play:disabled {
@@ -724,8 +868,7 @@
       border: 1px solid var(--border);
       border-radius: var(--r2);
       overflow: hidden;
-      position: sticky;
-      top: 20px;
+      position: relative;
     }
 
     .preview-topbar {
@@ -806,9 +949,34 @@
     .preview-empty-ring svg { width: 28px; height: 28px; }
 
     .preview-empty p {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--muted);
       font-family: 'Departure Mono', monospace;
+      text-align: center;
+      max-width: 320px;
+    }
+
+    .preview-skeleton {
+      width: min(420px, 88%);
+      display: grid;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .preview-skeleton-bar {
+      height: 10px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(124, 58, 237, 0.25) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 220% 100%;
+      animation: pulseSlide 1.5s ease infinite;
+    }
+
+    .preview-skeleton-bar:nth-child(2) { width: 78%; }
+    .preview-skeleton-bar:nth-child(3) { width: 62%; }
+
+    @keyframes pulseSlide {
+      from { background-position: 100% 0; }
+      to { background-position: -100% 0; }
     }
 
     /* IFRAME DEVICE */
@@ -943,6 +1111,7 @@
       width: 30px; height: 30px;
       border: 2px solid var(--border2);
       border-top-color: var(--accent);
+      border-right-color: var(--accent2);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
@@ -963,17 +1132,98 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      color: var(--muted);
+      font-size: 12px;
+      color: var(--text);
       font-family: 'Departure Mono', monospace;
+      background: rgba(124, 58, 237, 0.2);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 6px 12px;
+      transition: all 0.2s ease;
     }
 
-    .tip::before {
+    .tip:hover {
+      background: rgba(124, 58, 237, 0.3);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* SEO SECTION */
+    .seo-section {
+      max-width: 800px;
+      margin: 60px auto 0;
+      padding: 0 24px 60px;
+      color: var(--muted);
+      font-family: 'Cabinet Grotesk', sans-serif;
+    }
+
+    .seo-section h2,
+    .seo-section h3 {
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    .seo-section h2 {
+      font-size: 22px;
+      margin-bottom: 16px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .seo-section h2::after {
       content: '';
-      width: 4px; height: 4px;
-      border-radius: 50%;
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40%;
+      height: 4px;
       background: var(--accent);
+      border-radius: 2px;
+    }
+
+    .seo-section h3 {
+      font-size: 18px;
+      margin: 20px 0 10px;
+    }
+
+    .seo-section p,
+    .seo-section li {
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .seo-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      padding: 0;
+      margin: 0;
+    }
+
+    .seo-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .seo-list-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      display: inline-grid;
+      place-items: center;
       flex-shrink: 0;
+      background: var(--accent);
+      color: white;
+      margin-top: 2px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .seo-list-icon:hover {
+      background: var(--accent2);
+      transform: scale(1.05);
     }
 
     /* TOAST */
@@ -1010,6 +1260,10 @@
 
     <!-- NAV -->
     <nav>
+      <div class="top-nav-links">
+        <a href="/about" class="top-nav-link">About</a>
+        <a href="/how-it-works" class="top-nav-link">How it works</a>
+      </div>
       <a href="#dropzone" class="top-upload-btn" id="topUploadBtn">⚡ Upload ZIP &amp; Get Live Link</a>
       <div class="status-pill" id="saveStatus">
         <div class="status-dot"></div>
@@ -1021,25 +1275,25 @@
     <section class="hero">
       <div class="hero-badge">
         <div class="hero-badge-dot">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#070708" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#070708" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
           </svg>
         </div>
         ZIP → Live URL in seconds
       </div>
       <h1>
-        Drop a ZIP.<br/>
+        <span class="line1">Drop <strong>a ZIP.</strong></span>
         <span class="line2">Run it anywhere.</span>
       </h1>
       <p class="hero-sub">Upload any static web project. RunZip hosts it instantly and gives you a shareable link + QR code.</p>
     </section>
 
     <div class="trust-bar">
-      <div class="trust-item">✓ No login required</div>
-      <div class="trust-item">✓ No account needed</div>
-      <div class="trust-item">✓ Auto-deleted in 24h</div>
-      <div class="trust-item">✓ Free forever</div>
-      <div class="trust-item">✓ Works on any device</div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">ID</span><span class="trust-label">No login required</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">FREE</span><span class="trust-label">No account needed</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">24H</span><span class="trust-label">Auto-deleted in 24h</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">$0</span><span class="trust-label">Free forever</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">MOB</span><span class="trust-label">Works on any device</span></div>
     </div>
 
     <div class="how-it-works">
@@ -1050,7 +1304,9 @@
           <span>Any static HTML CSS JS project</span>
         </div>
       </div>
-      <div class="hiw-arrow">→</div>
+      <div class="hiw-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
       <div class="hiw-step">
         <div class="hiw-num">02</div>
         <div class="hiw-text">
@@ -1058,7 +1314,9 @@
           <span>Hosted instantly on our servers</span>
         </div>
       </div>
-      <div class="hiw-arrow">→</div>
+      <div class="hiw-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
       <div class="hiw-step">
         <div class="hiw-num">03</div>
         <div class="hiw-text">
@@ -1162,7 +1420,7 @@
             <button type="button" class="mode-btn" data-mode="phone">Phone</button>
           </div>
           <div id="viewerCount" style="display:none; align-items:center; gap:6px; font-size:11px; font-family:'Departure Mono',monospace; color:#5a5a6a; padding:5px 12px; background:#0d0d10; border:1px solid #1c1c23; border-radius:100px;">
-            <div style="width:6px;height:6px;border-radius:50%;background:#00d4ff;animation:blink 1.4s infinite;"></div>
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.4s infinite;"></div>
             <span id="viewerText">1 viewer</span>
           </div>
         </div>
@@ -1176,7 +1434,12 @@
                 <line x1="12" y1="17" x2="12" y2="21"/>
               </svg>
             </div>
-            <p>Upload a ZIP to preview</p>
+            <p>Upload a ZIP and your live preview appears here instantly.</p>
+            <div class="preview-skeleton" aria-hidden="true">
+              <div class="preview-skeleton-bar"></div>
+              <div class="preview-skeleton-bar"></div>
+              <div class="preview-skeleton-bar"></div>
+            </div>
           </div>
 
           <div class="iframe-device-wrap" id="iframeOuter">
@@ -1213,22 +1476,22 @@
     </div>
   </div>
 
-  <section style="max-width:800px;margin:60px auto 0;padding:0 24px 60px;color:#3a3a4a;font-family:'Cabinet Grotesk',sans-serif;">
-    <h2 style="font-size:18px;color:#2a2a3a;margin-bottom:16px;">The fastest way to share a web project</h2>
-    <p style="font-size:14px;line-height:1.8;margin-bottom:12px;">RunZip lets you share any static web project instantly. Upload a ZIP file and get a live URL and QR code in seconds. No login required, no account needed, completely free.</p>
-    <h3 style="font-size:16px;color:#2a2a3a;margin:20px 0 10px;">Perfect for developers who need to:</h3>
-    <ul style="font-size:14px;line-height:2;padding-left:20px;">
-      <li>Share a web project with a client without deploying</li>
-      <li>Test a website on mobile instantly via QR code</li>
-      <li>Show a HTML CSS JavaScript project to anyone</li>
-      <li>Share a browser game with friends instantly</li>
-      <li>Preview a static site on any device</li>
-      <li>Get a shareable link for a ZIP file project</li>
+  <section class="seo-section">
+    <h2>The fastest way to share a web project</h2>
+    <p>RunZip lets you share any static web project instantly. Upload a ZIP file and get a live URL and QR code in seconds. No login required, no account needed, completely free.</p>
+    <h3>Perfect for developers who need to:</h3>
+    <ul class="seo-list">
+      <li><span class="seo-list-icon" aria-hidden="true">C</span><span>Share a web project with a client without deploying</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">M</span><span>Test a website on mobile instantly via QR code</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">W</span><span>Show a HTML CSS JavaScript project to anyone</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">G</span><span>Share a browser game with friends instantly</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">D</span><span>Preview a static site on any device</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">L</span><span>Get a shareable link for a ZIP file project</span></li>
     </ul>
-    <h3 style="font-size:16px;color:#2a2a3a;margin:20px 0 10px;">How RunZip works</h3>
-    <p style="font-size:14px;line-height:1.8;">Upload your ZIP file containing your HTML CSS and JavaScript project. RunZip automatically detects your index.html entry point, hosts your project on a secure URL, and generates a QR code you can scan with any phone. Your project is available instantly with no configuration required.</p>
-    <h3 style="font-size:16px;color:#2a2a3a;margin:20px 0 10px;">Free static site hosting with QR code sharing</h3>
-    <p style="font-size:14px;line-height:1.8;">Unlike other hosting services, RunZip requires no account, no login, and no configuration. Simply upload your ZIP and share the link. Projects are automatically deleted after 24 hours keeping your workspace clean.</p>
+    <h3>How RunZip works</h3>
+    <p>Upload your ZIP file containing your HTML CSS and JavaScript project. RunZip automatically detects your index.html entry point, hosts your project on a secure URL, and generates a QR code you can scan with any phone. Your project is available instantly with no configuration required.</p>
+    <h3>Free static site hosting with QR code sharing</h3>
+    <p>Unlike other hosting services, RunZip requires no account, no login, and no configuration. Simply upload your ZIP and share the link. Projects are automatically deleted after 24 hours keeping your workspace clean.</p>
   </section>
 
   <div id="toast" class="toast" aria-live="polite"></div>
