@@ -24,22 +24,19 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0a0e27;
-      --bg-light: #0f172a;
+      --bg:       #0f172a;
+      --bg2:      #1a234a;
       --surface:  #1e293b;
-      --surface2: #334155;
       --border:   #334155;
       --border2:  #475569;
       --accent:   #7c3aed;
-      --accent-light: #a78bfa;
       --accent2:  #10b981;
-      --accent2-light: #34d399;
+      --accent-d: #6d28d9;
       --text:     #f1f5f9;
-      --text-sub: #cbd5e1;
       --muted:    #94a3b8;
       --muted2:   #64748b;
-      --r:        12px;
-      --r2:       16px;
+      --r:        14px;
+      --r2:       22px;
     }
 
     html, body {
@@ -57,101 +54,91 @@
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 25%, #0f172a 50%, #16213e 75%, #0a0e27 100%);
-      background-size: 400% 400%;
-      animation: bgGradient 20s ease infinite;
+      100% { background-position: 0% 50%; }
+    }
+
+    /* GRAIN */
     body::after {
-    @keyframes bgGradient {
+      content: '';
       position: fixed;
       inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 9999;
-    body::before {
+    }
+
     /* GLOW */
     .glow {
       position: fixed;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+      border-radius: 50%;
       filter: blur(160px);
       pointer-events: none;
       z-index: 0;
     }
-    .glow-orb {
+    .glow-1 { width: 700px; height: 700px; background: rgba(124, 58, 237, 0.1); top: -300px; left: 50%; transform: translateX(-50%); }
+    .glow-2 { width: 300px; height: 300px; background: rgba(16, 185, 129, 0.08); bottom: 100px; right: -100px; }
 
     /* SHELL */
-      filter: blur(80px);
-      opacity: 0.15;
+    .shell {
       position: relative;
       z-index: 1;
       min-height: 100vh;
+      max-width: 1280px;
+      margin: 0 auto;
       padding: 0 28px 60px;
-    .glow-orb-1 { width: 800px; height: 800px; background: #7c3aed; top: -200px; left: -200px; }
-    .glow-orb-2 { width: 500px; height: 500px; background: #10b981; bottom: 100px; right: -100px; }
+    }
 
-    .container {
     /* NAV */
-      z-index: 2;
-      width: 100%;
-      max-width: 1200px;
+    nav {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      padding: 0 20px;
+      gap: 12px;
       padding: 22px 0;
       border-bottom: 1px solid var(--border);
-    header {
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(79, 172, 254, 0.1);
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      margin-bottom: 0;
+    }
 
-    .top-nav-link {
-    header .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 999px;
-      border: 1px solid var(--border2);
-    .logo {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      background: linear-gradient(135deg, #7c3aed, #10b981);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-decoration: none;
-      display: flex;
+    .top-nav-links {
+      display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
-    }
-    .logo span {
-      font-size: 24px;
+      flex-wrap: wrap;
     }
 
-    .nav-right {
-      display: flex;
-      gap: 12px;
+    .top-nav-link {
+      display: inline-flex;
       align-items: center;
-    }
-
-    .nav-link {
-      padding: 8px 16px;
-      border-radius: 100px;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
       color: var(--muted);
       text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
+      font-size: 12px;
+      font-family: 'Departure Mono', monospace;
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 2px solid transparent;
     }
 
-    .nav-link:hover {
+    .top-nav-link:hover {
+      color: var(--accent);
+      border-color: rgba(124, 58, 237, 0.5);
+      background: rgba(124, 58, 237, 0.08);
+      border-bottom-color: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+    }
+
     .top-upload-btn {
-      border-color: rgba(124, 58, 237, 0.3);
-      background: rgba(124, 58, 237, 0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: min(760px, 100%);
+      min-height: 62px;
       border: 1px solid rgba(124, 58, 237, 0.5);
       border-radius: 14px;
       background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(16, 185, 129, 0.15));
@@ -1456,206 +1443,250 @@
   </style>
 </head>
 <body>
-  <div class="glow-orb glow-orb-1"></div>
-  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
 
-  <!-- HEADER -->
-  <header>
-    <div class="container">
-      <a href="/" class="logo">
-        <span>⚡</span> RunZip
-      </a>
-      <div class="nav-right">
-        <a href="/about" class="nav-link">About</a>
-        <a href="/how-it-works" class="nav-link">How it Works</a>
+  <div class="shell">
+
+    <!-- NAV -->
+    <nav>
+      <div class="top-nav-links">
+        <a href="/about" class="top-nav-link">About</a>
+        <a href="/how-it-works" class="top-nav-link">How it works</a>
       </div>
-    </div>
-  </header>
+      <a href="#dropzone" class="top-upload-btn" id="topUploadBtn">⚡ Upload ZIP &amp; Get Live Link</a>
+      <div class="status-pill" id="saveStatus">
+        <div class="status-dot"></div>
+        <span id="statusText">Waiting for ZIP</span>
+      </div>
+    </nav>
 
-
-
-
-
-
-
-  <main>
-    <!-- HERO SECTION -->
+    <!-- HERO -->
     <section class="hero">
-      <div class="container">
-        <div class="hero-badge">Deploy static sites instantly</div>
-        <h1>
-          <span>Upload ZIP</span>
-          <span>Deploy Instantly</span>
-        </h1>
-        <p>Zero setup. No login. No credit card. Get a live URL + QR code in seconds. Share your web project with anyone.</p>
-        <div class="hero-buttons">
-          <button class="btn-primary" onclick="document.getElementById('zipInput').click(); return false;">
-            ↗ Upload & Deploy
-          </button>
-          <button class="btn-secondary" onclick="document.location.href='/how-it-works'">Learn More</button>
+      <div class="hero-badge">
+        <div class="hero-badge-dot">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#070708" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
         </div>
-        <div class="hero-meta">
-          <div class="hero-meta-item">No login required</div>
-          <div class="hero-meta-item">Instant deploy</div>
-          <div class="hero-meta-item">Auto-delete in 24h</div>
-        </div>
+        ZIP → Live URL in seconds
       </div>
+      <h1>
+        <span class="line1">🚀 Instantly Deploy</span>
+        <span class="line2">Any Web Project</span>
+      </h1>
+      <p class="hero-sub">Drop your ZIP → Get Live URL + QR in seconds</p>
     </section>
 
-    <!-- TRUST SECTION -->
-    <section class="trust-section">
-      <div class="container">
-        <div class="trust-grid">
-          <div class="trust-badge">
-            <div class="trust-icon">🔒</div>
-            <h3>Auto-Delete in 24h</h3>
-            <p>Projects automatically disappear after 24 hours. Clean, no clutter.</p>
-          </div>
-          <div class="trust-badge">
-            <div class="trust-icon">🛡️</div>
-            <h3>No Data Stored</h3>
-            <p>We don't collect or store user data. Completely private.</p>
-          </div>
-          <div class="trust-badge">
-            <div class="trust-icon">⚡</div>
-            <h3>Secure Processing</h3>
-            <p>Military-grade encryption for all file transfers.</p>
-          </div>
-          <div class="trust-badge">
-            <div class="trust-icon">🚀</div>
-            <h3>Global CDN</h3>
-            <p>Hosted on fast servers worldwide. Instant performance.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- UPLOAD SECTION -->
-    <section class="upload-section">
-      <div class="container upload-container">
-        <div class="upload-title">Deploy Your Project</div>
-        <div class="upload-subtitle">Drag and drop your ZIP file or click to browse</div>
-        <div class="dropzone" id="dropzone">
-          <input id="zipInput" type="file" accept=".zip,application/zip" hidden />
-          <div class="dropzone-content">
-            <div class="dropzone-icon">📦</div>
-            <div class="dropzone-title">Drop your project here</div>
-            <div class="dropzone-subtitle">or click to select a file</div>
-            <div class="dropzone-specs">
-              <div class="dropzone-spec">HTML, CSS, JS</div>
-              <div class="dropzone-spec">Max 10MB</div>
-              <div class="dropzone-spec">Any static site</div>
-            </div>
-          </div>
-        </div>
-        <div class="upload-progress" id="uploadProgress">
-          <div class="progress-file">
-            <div class="progress-icon">📄</div>
-            <div class="progress-info">
-              <div class="progress-name" id="progressName">file.zip</div>
-              <div class="progress-size" id="progressSize">0 MB</div>
-            </div>
-            <div class="progress-percent" id="progressPercent">0%</div>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar" id="progressBar"></div>
-          </div>
-          <div class="progress-status">
-            <span id="progressStatus">Uploading...</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section class="how-section">
-      <div class="container">
-        <div class="section-title">How It Works</div>
-        <div class="steps-grid">
-          <div class="step">
-            <div class="step-number">1</div>
-            <div class="step-icon">📤</div>
-            <h3>Upload ZIP</h3>
-            <p>Select any ZIP file with your HTML, CSS, and JavaScript project.</p>
-          </div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-icon">⚡</div>
-            <h3>Auto Deploy</h3>
-            <p>We instantly host your project on our global servers.</p>
-          </div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-icon">🔗</div>
-            <h3>Share Live</h3>
-            <p>Get a shareable link and QR code. That's it!</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DEMO SECTION -->
-    <section class="demo-section">
-      <div class="container">
-        <div class="demo-container">
-          <div class="demo-title">From ZIP to Live in Seconds</div>
-          <div class="demo-text">Your project goes live instantly. No build process, no configuration, no waiting.</div>
-          <div class="demo-visual">
-            <div class="demo-box">🗂️ Your ZIP</div>
-            <div class="demo-arrow">→</div>
-            <div class="demo-box">🌐 Live URL</div>
-          </div>
-          <div class="demo-visual" style="margin-top: 20px;">
-            <div class="demo-box">📱 QR Code</div>
-            <div class="demo-arrow">→</div>
-            <div class="demo-box">📲 Any Device</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- STATS SECTION -->
-    <section class="stats-section">
-      <div class="container">
-        <div class="stats-grid">
-          <div class="stat">
-            <div class="stat-number">↯2s</div>
-            <div class="stat-label">Deploy Time</div>
-          </div>
-          <div class="stat">
-            <div class="stat-number">∞</div>
-            <div class="stat-label">Free Projects</div>
-          </div>
-          <div class="stat">
-            <div class="stat-number">0 Setup</div>
-            <div class="stat-label">Required</div>
-          </div>
-          <div class="stat">
-            <div class="stat-number">100%</div>
-            <div class="stat-label">Uptime</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA SECTION -->
-    <section class="cta-section">
-      <div class="container">
-        <div class="cta-title">Ready to Deploy?</div>
-        <div class="cta-text">Upload your first project and get a live link in seconds.</div>
-        <button class="btn-primary" onclick="document.getElementById('zipInput').click(); return false;" style="margin: 0 auto; display: block;">
-          ↗ Upload Your ZIP Now
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 RunZip. Deploy faster. Share better.</p>
+    <div class="trust-bar">
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">ID</span><span class="trust-label">No login required</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">FREE</span><span class="trust-label">No account needed</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">24H</span><span class="trust-label">Auto-deleted in 24h</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">$0</span><span class="trust-label">Free forever</span></div>
+      <div class="trust-item"><span class="trust-icon" aria-hidden="true">MOB</span><span class="trust-label">Works on any device</span></div>
     </div>
-  </footer>
+
+    <div class="how-it-works">
+      <div class="hiw-step">
+        <div class="hiw-num">01</div>
+        <div class="hiw-text">
+          <strong>Drop your ZIP</strong>
+          <span>Any static HTML CSS JS project</span>
+        </div>
+      </div>
+      <div class="hiw-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">02</div>
+        <div class="hiw-text">
+          <strong>Get live URL</strong>
+          <span>Hosted instantly on our servers</span>
+        </div>
+      </div>
+      <div class="hiw-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+      <div class="hiw-step">
+        <div class="hiw-num">03</div>
+        <div class="hiw-text">
+          <strong>Share anywhere</strong>
+          <span>Link + QR code ready instantly</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE -->
+    <div class="stage">
+
+      <!-- LEFT: UPLOAD -->
+      <div class="upload-card">
+        <div class="upload-card-inner">
+
+          <label class="dropzone" id="dropzone" for="zipInput">
+            <input id="zipInput" type="file" accept=".zip,application/zip" hidden />
+            <div class="dz-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <div class="dz-title">Drop your ZIP here</div>
+            <div class="dz-sub">click to browse · max 10MB</div>
+          </label>
+
+          <div class="file-selected" id="fileBadge">
+            <div class="file-selected-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/>
+                <polyline points="13 2 13 9 20 9"/>
+              </svg>
+            </div>
+            <div class="file-selected-info">
+              <div class="file-selected-name" id="fileBadgeName">file.zip</div>
+              <div class="file-selected-size" id="fileBadgeSize">0 MB</div>
+            </div>
+          </div>
+
+          <div class="upload-progress" id="uploadProgress">
+            <div class="upload-progress-bar" id="uploadProgressBar"></div>
+          </div>
+
+          <button id="uploadBtn" class="btn-primary">Upload ZIP</button>
+
+          <div class="hdivider"></div>
+
+          <!-- RESULT -->
+          <div class="result" id="resultSection">
+
+            <div class="section-label">Share</div>
+
+            <div class="url-row">
+              <input id="shareUrlInput" class="url-input" type="text" readonly placeholder="Link appears here…" />
+              <button id="copyLinkBtn" class="btn-ghost" disabled>Copy</button>
+            </div>
+
+            <div class="qr-hero" id="qrBlock" style="display:none">
+              <div class="qr-img-wrap">
+                <img id="qrImage" alt="QR code" />
+              </div>
+              <div class="qr-text">
+                <div class="qr-text-title">Scan to open on phone</div>
+                <div class="qr-text-sub">Point your camera at the QR code to open instantly on any device.</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+                  <button id="openFullBtn" class="btn-open" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12">
+                      <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    Open Full Project
+                  </button>
+                  <button id="playBtn" class="btn-play" disabled>▶ Play in New Tab</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="meta-row">
+              <div class="meta-chip">
+                <div class="meta-chip-label">Project ID</div>
+                <div class="meta-chip-val" id="projectIdValue">—</div>
+              </div>
+              <div class="meta-chip">
+                <div class="meta-chip-label">Status</div>
+                <div class="meta-chip-val" id="metaStatus">—</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW -->
+      <div class="preview-card">
+        <div class="preview-topbar">
+          <div></div>
+          <div class="mode-toggle" id="modeToggle">
+            <button type="button" class="mode-btn active" data-mode="desktop">Desktop</button>
+            <button type="button" class="mode-btn" data-mode="tablet">Tablet</button>
+            <button type="button" class="mode-btn" data-mode="phone">Phone</button>
+          </div>
+          <div id="viewerCount" style="display:none; align-items:center; gap:6px; font-size:11px; font-family:'Departure Mono',monospace; color:#5a5a6a; padding:5px 12px; background:#0d0d10; border:1px solid #1c1c23; border-radius:100px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.4s infinite;"></div>
+            <span id="viewerText">1 viewer</span>
+          </div>
+        </div>
+
+        <div class="preview-stage" id="previewStage">
+          <div class="preview-empty" id="previewEmpty">
+            <div class="preview-empty-ring">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <p>Upload a ZIP and your live preview appears here instantly.</p>
+            <div class="preview-skeleton" aria-hidden="true">
+              <div class="preview-skeleton-bar"></div>
+              <div class="preview-skeleton-bar"></div>
+              <div class="preview-skeleton-bar"></div>
+            </div>
+          </div>
+
+          <div class="iframe-device-wrap" id="iframeOuter">
+            <div class="iframe-device desktop" id="iframeWrap">
+              <div class="device-notch" aria-hidden="true"></div>
+              <div class="iframe-chrome">
+              </div>
+              <div class="frame-loader" id="frameLoading">
+                <div class="spin"></div>
+                <span>Loading preview…</span>
+              </div>
+              <iframe
+                id="previewFrame"
+                class="preview-frame"
+                title="Project preview"
+                loading="eager"
+                tabindex="0"
+                allow="autoplay; gamepad; keyboard-map; pointer-lock"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups"
+              ></iframe>
+              <div class="device-homebar" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tips-bar">
+          <span class="tip">.zip only</span>
+          <span class="tip">needs index.html</span>
+          <span class="tip">max 10MB</span>
+          <span class="tip">expires in 24h</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <section class="seo-section">
+    <h2>The fastest way to share a web project</h2>
+    <p>RunZip lets you share any static web project instantly. Upload a ZIP file and get a live URL and QR code in seconds. No login required, no account needed, completely free.</p>
+    <h3>Perfect for developers who need to:</h3>
+    <ul class="seo-list">
+      <li><span class="seo-list-icon" aria-hidden="true">C</span><span>Share a web project with a client without deploying</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">M</span><span>Test a website on mobile instantly via QR code</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">W</span><span>Show a HTML CSS JavaScript project to anyone</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">G</span><span>Share a browser game with friends instantly</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">D</span><span>Preview a static site on any device</span></li>
+      <li><span class="seo-list-icon" aria-hidden="true">L</span><span>Get a shareable link for a ZIP file project</span></li>
+    </ul>
+    <h3>How RunZip works</h3>
+    <p>Upload your ZIP file containing your HTML CSS and JavaScript project. RunZip automatically detects your index.html entry point, hosts your project on a secure URL, and generates a QR code you can scan with any phone. Your project is available instantly with no configuration required.</p>
+    <h3>Free static site hosting with QR code sharing</h3>
+    <p>Unlike other hosting services, RunZip requires no account, no login, and no configuration. Simply upload your ZIP and share the link. Projects are automatically deleted after 24 hours keeping your workspace clean.</p>
+  </section>
 
   <div id="toast" class="toast" aria-live="polite"></div>
   <script src="/socket.io/socket.io.js"></script>
