@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How RunZip Works</title>
+  <meta name="description" content="Step-by-step guide to using RunZip: upload ZIP, get live URL, share with QR code." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Departure+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070708;
+      --surface: #111116;
+      --border: #1c1c23;
+      --accent: #00d4ff;
+      --text: #ececec;
+      --muted: #7b7f8f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(620px 620px at 50% -170px, rgba(0, 212, 255, 0.1), transparent 70%),
+        var(--bg);
+    }
+
+    .shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.4px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      border: 1px solid rgba(0, 212, 255, 0.45);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-family: 'Departure Mono', monospace;
+      font-size: 13px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chip.active {
+      color: var(--accent);
+      border-color: rgba(0, 212, 255, 0.45);
+      background: rgba(0, 212, 255, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(32px, 6vw, 54px);
+      line-height: 0.95;
+      letter-spacing: -1.7px;
+    }
+
+    .lead {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 17px;
+      max-width: 760px;
+    }
+
+    .block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .block h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      color: var(--accent);
+      letter-spacing: -0.4px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .step:last-child { margin-bottom: 0; }
+
+    .step-no {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(0, 212, 255, 0.13);
+      border: 1px solid rgba(0, 212, 255, 0.35);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-family: 'Departure Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .step h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 14px;
+    }
+
+    .faq-item {
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-item:first-of-type { border-top: none; padding-top: 0; }
+
+    .faq-q {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .faq-a {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 24px;
+      border-radius: 12px;
+      background: rgba(0, 212, 255, 0.18);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: #c5f5ff;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 760px) {
+      nav { gap: 10px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav>
+      <a href="/" class="brand">
+        <span class="brand-mark">ZIP</span>
+        <span>RunZip</span>
+      </a>
+      <div class="nav-links">
+        <a href="/about" class="chip">About</a>
+        <a href="/how-it-works" class="chip active">How it works</a>
+        <a href="/" class="chip">Open App</a>
+      </div>
+    </nav>
+
+    <h1>How to Use RunZip</h1>
+    <p class="lead">RunZip helps you upload a ZIP file and instantly share your static web project with a live URL and QR code.</p>
+
+    <section class="block">
+      <h2>Step-by-step guide</h2>
+      <div class="step">
+        <div class="step-no">01</div>
+        <div>
+          <h3>Select your ZIP file</h3>
+          <p>Choose a ZIP that contains your static website or app files.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">02</div>
+        <div>
+          <h3>Upload to RunZip</h3>
+          <p>Drop the ZIP into the upload area and click upload. RunZip detects the entry page automatically.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-no">03</div>
+        <div>
+          <h3>Get your live URL and QR code</h3>
+          <p>Copy the URL or scan the generated QR code to open the project on mobile instantly.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Supported file types</h2>
+      <ul>
+        <li>ZIP archives containing static project files</li>
+        <li>HTML, CSS, JavaScript assets inside your ZIP</li>
+        <li>Nested folders are supported if an index.html exists</li>
+        <li>Maximum upload size: 10MB per ZIP file</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>How QR sharing works</h2>
+      <ul>
+        <li>After upload, RunZip generates a unique live link for your project</li>
+        <li>A QR code is created from that link immediately</li>
+        <li>Anyone can scan it with a phone camera and open your project</li>
+        <li>No app install and no account required</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>FAQ</h2>
+      <div class="faq-item">
+        <p class="faq-q">Is RunZip free?</p>
+        <p class="faq-a">Yes, RunZip is free to use.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q">Do I need an account?</p>
+        <p class="faq-a">No account or login is required.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q">How long are projects hosted?</p>
+        <p class="faq-a">Projects are automatically cleaned up after 24 hours.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q">What file size is supported?</p>
+        <p class="faq-a">Each upload supports ZIP files up to 10MB.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q">Does it work on mobile?</p>
+        <p class="faq-a">Yes. Open via direct link or QR code on phone and tablet.</p>
+      </div>
+    </section>
+
+    <a href="/" class="cta">Back to RunZip App</a>
+  </div>
+</body>
+</html>

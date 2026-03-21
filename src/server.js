@@ -599,6 +599,14 @@ app.get("/preview/:projectId", (_req, res) => {
   res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });
 
+app.get("/about", (_req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "about.html"));
+});
+
+app.get("/how-it-works", (_req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "how-it-works.html"));
+});
+
 app.get("*", (_req, res) => {
   res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });

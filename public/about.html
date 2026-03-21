@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About RunZip</title>
+  <meta name="description" content="About RunZip: instant ZIP-to-live URL hosting with QR sharing for static web projects." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Departure+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070708;
+      --bg2: #0d0d10;
+      --surface: #111116;
+      --border: #1c1c23;
+      --accent: #00d4ff;
+      --text: #ececec;
+      --muted: #7b7f8f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(700px 700px at 50% -200px, rgba(0, 212, 255, 0.1), transparent 65%),
+        radial-gradient(350px 350px at 100% 100%, rgba(100, 200, 255, 0.08), transparent 70%),
+        var(--bg);
+    }
+
+    .shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      border: 1px solid rgba(0, 212, 255, 0.45);
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-family: 'Departure Mono', monospace;
+      font-size: 13px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .chip.active {
+      color: var(--accent);
+      border-color: rgba(0, 212, 255, 0.45);
+      background: rgba(0, 212, 255, 0.08);
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(34px, 6vw, 58px);
+      line-height: 0.95;
+      letter-spacing: -2px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .step-no {
+      font-size: 26px;
+      color: var(--accent);
+      font-weight: 900;
+      font-family: 'Departure Mono', monospace;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .feature-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 212, 255, 0.12);
+      color: var(--accent);
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    .feature strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .feature span {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .trust {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .trust-item {
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--surface);
+      border: 1px solid rgba(0, 212, 255, 0.22);
+      color: var(--accent);
+      font-family: 'Departure Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 24px;
+      border-radius: 12px;
+      background: rgba(0, 212, 255, 0.18);
+      border: 1px solid rgba(0, 212, 255, 0.4);
+      color: #c5f5ff;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid3 { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr; }
+      nav { gap: 10px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav>
+      <a href="/" class="brand">
+        <span class="brand-mark">ZIP</span>
+        <span>RunZip</span>
+      </a>
+      <div class="nav-links">
+        <a href="/about" class="chip active">About</a>
+        <a href="/how-it-works" class="chip">How it works</a>
+        <a href="/" class="chip">Open App</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <h1>Turn Any ZIP Into a <span>Live Share Link</span></h1>
+      <p>RunZip is a fast way to host static web projects. Upload your ZIP and instantly get a live URL and QR code you can share with teammates, clients, or friends without any account setup.</p>
+    </section>
+
+    <section class="grid3">
+      <article class="card">
+        <div class="step-no">01</div>
+        <h3>Upload your project</h3>
+        <p>Drop a ZIP containing your HTML, CSS, and JavaScript files.</p>
+      </article>
+      <article class="card">
+        <div class="step-no">02</div>
+        <h3>Get a live URL</h3>
+        <p>RunZip detects your entry file and hosts it immediately.</p>
+      </article>
+      <article class="card">
+        <div class="step-no">03</div>
+        <h3>Share anywhere</h3>
+        <p>Copy the link or scan the QR code on any mobile device.</p>
+      </article>
+    </section>
+
+    <section class="features">
+      <article class="feature">
+        <div class="feature-icon">⚡</div>
+        <div>
+          <strong>Instant preview</strong>
+          <span>Open and test your project in-browser right after upload.</span>
+        </div>
+      </article>
+      <article class="feature">
+        <div class="feature-icon">🔗</div>
+        <div>
+          <strong>Shareable links</strong>
+          <span>Generate links you can send in chat, email, or docs.</span>
+        </div>
+      </article>
+      <article class="feature">
+        <div class="feature-icon">📱</div>
+        <div>
+          <strong>QR code access</strong>
+          <span>Scan once from your phone and open the hosted project.</span>
+        </div>
+      </article>
+      <article class="feature">
+        <div class="feature-icon">🧩</div>
+        <div>
+          <strong>Static web support</strong>
+          <span>Works with plain HTML, CSS, and JavaScript projects.</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="trust">
+      <div class="trust-item">No login required</div>
+      <div class="trust-item">Free forever</div>
+      <div class="trust-item">Auto-delete in 24h</div>
+    </section>
+
+    <a href="/" class="cta">Back to RunZip App</a>
+  </div>
+</body>
+</html>

@@ -11,6 +11,7 @@ const state = {
 
 const els = {
   saveStatus:     document.getElementById("saveStatus"),
+  topUploadBtn:   document.getElementById("topUploadBtn"),
   dropzone:       document.getElementById("dropzone"),
   zipInput:       document.getElementById("zipInput"),
   uploadBtn:      document.getElementById("uploadBtn"),
@@ -264,6 +265,12 @@ function wireDropzone() {
 }
 
 function wireEvents() {
+  els.topUploadBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    els.dropzone?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setTimeout(() => els.zipInput?.click(), 450);
+  });
+
   els.zipInput.addEventListener("change", (e) => {
     const [file] = e.target.files || [];
     setSelectedFile(file || null);

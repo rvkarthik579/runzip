@@ -81,40 +81,43 @@
 
     /* NAV */
     nav {
+      position: relative;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       padding: 22px 0;
       border-bottom: 1px solid var(--border);
       margin-bottom: 0;
     }
 
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .nav-logo-mark {
+    .top-upload-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .nav-logo-mark svg { width: 28px; height: 34px; display: block; }
-
-    .nav-logo-text {
+      width: min(760px, calc(100% - 190px));
+      min-height: 56px;
+      border: 1px solid rgba(0, 212, 255, 0.45);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.25), rgba(0, 212, 255, 0.13));
+      color: #c5f5ff;
       font-size: 18px;
       font-weight: 900;
-      color: var(--text);
-      letter-spacing: -0.5px;
+      letter-spacing: -0.2px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .nav-logo-text b { color: #00d4ff; font-weight: 900; }
+    .top-upload-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 32px rgba(0, 212, 255, 0.2);
+      border-color: rgba(0, 212, 255, 0.75);
+    }
 
     .status-pill {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       align-items: center;
       gap: 7px;
@@ -236,6 +239,57 @@
       line-height: 1;
     }
 
+    .how-it-works {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .hiw-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .hiw-num {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--accent);
+      font-family: 'Departure Mono', monospace;
+      line-height: 1;
+    }
+
+    .hiw-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .hiw-text strong {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .hiw-text span {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'Departure Mono', monospace;
+    }
+
+    .hiw-arrow {
+      font-size: 20px;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
     .hero-sub {
       font-size: 17px;
       color: var(--muted);
@@ -255,6 +309,24 @@
 
     @media (max-width: 960px) {
       .stage { grid-template-columns: 1fr; }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      .top-upload-btn {
+        width: 100%;
+      }
+
+      .status-pill {
+        position: static;
+        transform: none;
+        margin-left: 12px;
+      }
+
+      .hiw-arrow {
+        display: none;
+      }
     }
 
     /* UPLOAD CARD */
@@ -938,16 +1010,7 @@
 
     <!-- NAV -->
     <nav>
-      <div class="nav-logo">
-        <div class="nav-logo-mark">
-          <svg width="28" height="34" viewBox="0 0 28 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 4C2 2.9 2.9 2 4 2H18L26 10V30C26 31.1 25.1 32 24 32H4C2.9 32 2 31.1 2 30V4Z" fill="#111116" stroke="#00d4ff" stroke-width="1.5"/>
-            <path d="M18 2L18 10H26" stroke="#00d4ff" stroke-width="1.5" stroke-linejoin="round"/>
-            <text x="7" y="24" font-family="monospace" font-size="9" font-weight="bold" fill="#00d4ff" letter-spacing="0.5">ZIP</text>
-          </svg>
-        </div>
-        <span class="nav-logo-text">Run<b>Zip</b></span>
-      </div>
+      <a href="#dropzone" class="top-upload-btn" id="topUploadBtn">⚡ Upload ZIP &amp; Get Live Link</a>
       <div class="status-pill" id="saveStatus">
         <div class="status-dot"></div>
         <span id="statusText">Waiting for ZIP</span>
@@ -977,6 +1040,32 @@
       <div class="trust-item">✓ Auto-deleted in 24h</div>
       <div class="trust-item">✓ Free forever</div>
       <div class="trust-item">✓ Works on any device</div>
+    </div>
+
+    <div class="how-it-works">
+      <div class="hiw-step">
+        <div class="hiw-num">01</div>
+        <div class="hiw-text">
+          <strong>Drop your ZIP</strong>
+          <span>Any static HTML CSS JS project</span>
+        </div>
+      </div>
+      <div class="hiw-arrow">→</div>
+      <div class="hiw-step">
+        <div class="hiw-num">02</div>
+        <div class="hiw-text">
+          <strong>Get live URL</strong>
+          <span>Hosted instantly on our servers</span>
+        </div>
+      </div>
+      <div class="hiw-arrow">→</div>
+      <div class="hiw-step">
+        <div class="hiw-num">03</div>
+        <div class="hiw-text">
+          <strong>Share anywhere</strong>
+          <span>Link + QR code ready instantly</span>
+        </div>
+      </div>
     </div>
 
     <!-- STAGE -->
