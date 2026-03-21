@@ -515,16 +515,40 @@
       transition: opacity 0.3s;
     }
 
+    .dropzone::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(90deg, rgba(124, 58, 237, 0), rgba(124, 58, 237, 0.4), rgba(124, 58, 237, 0));
+      opacity: 0;
+      transition: opacity 0.3s;
+      animation: none;
+      border-radius: var(--r);
+    }
+
     .dropzone:hover::before, .dropzone.drag-over::before { 
       opacity: 1;
       background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
     }
 
+    .dropzone:hover::after, .dropzone.drag-over::after {
+      opacity: 1;
+      animation: dragGlow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes dragGlow {
+      0%, 100% { transform: translateX(-100%); }
+      50% { transform: translateX(100%); }
+    }
+
     .dropzone:hover, .dropzone.drag-over {
       border-color: var(--accent2);
       border-style: solid;
-      background: rgba(16, 185, 129, 0.08);
-      box-shadow: 0 0 30px rgba(124, 58, 237, 0.3);
+      background: rgba(16, 185, 129, 0.12);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.5),
+                  0 0 80px rgba(16, 185, 129, 0.2),
+                  inset 0 0 20px rgba(124, 58, 237, 0.1);
+      transform: scale(1.02);
     }
 
     .dropzone.drag-over .dz-icon { transform: translateY(-8px) scale(1.1); }
@@ -537,6 +561,7 @@
       display: grid; place-items: center;
       color: white;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
     }
 
     .dz-icon svg {
@@ -683,6 +708,41 @@
       place-items: center;
       color: #070708;
       font-weight: 800;
+    }
+
+    /* PROGRESS BAR */
+    .upload-progress {
+      display: none;
+      height: 4px;
+      background: rgba(124, 58, 237, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 12px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .upload-progress.show {
+      display: block;
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    .upload-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.2s ease;
+      box-shadow: 0 0 10px rgba(124, 58, 237, 0.6);
+      position: relative;
+    }
+
+    .upload-progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 1.5s infinite;
     }
 
     @keyframes sweep {
@@ -1412,10 +1472,10 @@
         ZIP → Live URL in seconds
       </div>
       <h1>
-        <span class="line1">Drop <strong>a ZIP.</strong></span>
-        <span class="line2">Run it anywhere.</span>
+        <span class="line1">🚀 Instantly Deploy</span>
+        <span class="line2">Any Web Project</span>
       </h1>
-      <p class="hero-sub">Upload any static web project. RunZip hosts it instantly and gives you a shareable link + QR code.</p>
+      <p class="hero-sub">Drop your ZIP → Get Live URL + QR in seconds</p>
     </section>
 
     <div class="trust-bar">
@@ -1487,6 +1547,10 @@
               <div class="file-selected-name" id="fileBadgeName">file.zip</div>
               <div class="file-selected-size" id="fileBadgeSize">0 MB</div>
             </div>
+          </div>
+
+          <div class="upload-progress" id="uploadProgress">
+            <div class="upload-progress-bar" id="uploadProgressBar"></div>
           </div>
 
           <button id="uploadBtn" class="btn-primary">Upload ZIP</button>
