@@ -160,10 +160,14 @@ function paintUploadResult(payload) {
   els.uploadBtn.style.color = "#2563eb";
   els.uploadBtn.style.border = "2px solid #2563eb";
 
-  els.dropzone.style.minHeight = "60px";
-  els.dropzone.style.padding = "12px 20px";
+  els.dropzone.style.minHeight = "70px";
+  els.dropzone.style.padding = "14px 20px";
   els.dropzone.style.flexDirection = "row";
-  els.dropzone.style.gap = "12px";
+  els.dropzone.style.justifyContent = "center";
+  els.dropzone.style.gap = "10px";
+
+  const dzIcon = els.dropzone.querySelector(".dz-icon");
+  if (dzIcon) dzIcon.style.display = "none";
 
   const hint = document.getElementById("qrPreviewHint");
   if (hint) hint.style.display = "none";
