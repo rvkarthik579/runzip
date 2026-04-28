@@ -167,7 +167,7 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, exp
       const openBtn = document.getElementById("openProjectBtn");
       const viewer = document.getElementById("viewer");
       const frame = document.getElementById("projectFrame");
-      const runtimeUrl = "\${runtimeUrl}";
+      const runtimeUrl = "${runtimeUrl}";
 
       openBtn.addEventListener("click", () => {
         viewer.classList.add("show");
@@ -176,26 +176,27 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, exp
         openBtn.disabled = true;
       });
 
-      \${expiresAt ? \`
-      const expiresAt = new Date('\${expiresAt}').getTime();
-      const timerEl = document.getElementById('expirationTimer');
-      const timer = setInterval(() => {
-        const now = Date.now();
-        const diff = expiresAt - now;
-        if (diff <= 0) {
-          clearInterval(timer);
-          timerEl.textContent = "Expired";
-          timerEl.style.color = "#dc2626";
-          timerEl.style.background = "#fee2e2";
-        } else {
-          const m = Math.floor(diff / 60000);
-          const s = Math.floor((diff % 60000) / 1000);
-          timerEl.textContent = \\\`\${m}:\\\${s.toString().padStart(2, "0")} remaining\\\`;
-        }
-      }, 1000);
-      \` : ''}
+      if ("${expiresAt || ''}") {
+        const expiresAt = new Date("${expiresAt}").getTime();
+        const timerEl = document.getElementById("expirationTimer");
+        const timer = setInterval(() => {
+          const now = Date.now();
+          const diff = expiresAt - now;
+          if (diff <= 0) {
+            clearInterval(timer);
+            timerEl.textContent = "Expired";
+            timerEl.style.color = "#dc2626";
+            timerEl.style.background = "#fee2e2";
+            openBtn.textContent = "Project Expired";
+            openBtn.disabled = true;
+          } else {
+            const m = Math.floor(diff / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            timerEl.textContent = m + ":" + s.toString().padStart(2, "0") + " remaining";
+          }
+        }, 1000);
+      }
     </script>
   </body>
-</html>\`;
+</html>`;
 }
-
