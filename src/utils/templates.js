@@ -50,6 +50,58 @@ export function renderHostedErrorPage(message) {
   </head>
   <body>
     <div class="shell">
+/**
+ * Shared inline styles for server-rendered pages (share landing, error).
+ * Uses the same design tokens as the main frontend.
+ */
+const BASE_STYLES = `
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+    --accent: #4f46e5;
+    --accent-hover: #4338ca;
+    --text: #18181b;
+    --text-secondary: #52525b;
+    --text-muted: #a1a1aa;
+    --radius: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; }
+  body {
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.5;
+    color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+`;
+
+export function renderHostedErrorPage(message) {
+  const safeMessage = String(message || "Project not found.").replace(/[<>]/g, "");
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RunZip — Project Unavailable</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      ${BASE_STYLES}
+      .shell {
+        max-width: 520px; margin: 80px auto;
+        padding: 24px;
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      h1 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+      p { color: var(--text-secondary); font-size: 14px; margin-bottom: 6px; }
+      a { color: var(--accent); text-decoration: none; font-weight: 500; }
+      a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
       <h1>Project unavailable</h1>
       <p>${safeMessage}</p>
       <p><a href="/">← Back to RunZip</a></p>
@@ -58,7 +110,7 @@ export function renderHostedErrorPage(message) {
 </html>`;
 }
 
-export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, expiresAt }) {
+export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl }) {
   const runtimeUrl = `/p/${projectId}/__runzip_project`;
 
   return `<!doctype html>
@@ -71,7 +123,7 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, exp
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
     <style>
-      \${BASE_STYLES}
+      ${BASE_STYLES}
       .shell {
         max-width: 640px; margin: 0 auto;
         padding: 32px 16px 48px;
@@ -98,14 +150,6 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, exp
         width: 200px; max-width: 60vw; border-radius: 8px;
         border: 1px solid var(--border);
         background: #fff; padding: 6px;
-      }
-      .timer-badge {
-        display: inline-block;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 12px; font-weight: 600;
-        color: #d97706; background: #fef3c7;
-        padding: 4px 8px; border-radius: 12px;
-        margin-top: 16px;
       }
       .share-url {
         display: block; width: 100%; margin-top: 16px;
@@ -148,11 +192,8 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, exp
       <div class="card">
         <h1>Shared with RunZip</h1>
         <p>Scan the QR code or open the project below.</p>
-        <img class="qr" src="\${qrCodeDataUrl}" alt="Share QR code" />
-        
-        \${expiresAt ? \`<br><div id="expirationTimer" class="timer-badge">Loading timer...</div>\` : ''}
-
-        <input class="share-url" type="text" readonly value="\${shareUrl}" />
+        <img class="qr" src="${qrCodeDataUrl}" alt="Share QR code" />
+        <input class="share-url" type="text" readonly value="${shareUrl}" />
         <button id="openProjectBtn" class="open-btn">Open project</button>
       </div>
 
@@ -175,27 +216,6 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, exp
         openBtn.textContent = "Project opened";
         openBtn.disabled = true;
       });
-
-      if ("${expiresAt || ''}") {
-        const expiresAt = new Date("${expiresAt}").getTime();
-        const timerEl = document.getElementById("expirationTimer");
-        const timer = setInterval(() => {
-          const now = Date.now();
-          const diff = expiresAt - now;
-          if (diff <= 0) {
-            clearInterval(timer);
-            timerEl.textContent = "Expired";
-            timerEl.style.color = "#dc2626";
-            timerEl.style.background = "#fee2e2";
-            openBtn.textContent = "Project Expired";
-            openBtn.disabled = true;
-          } else {
-            const m = Math.floor(diff / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            timerEl.textContent = m + ":" + s.toString().padStart(2, "0") + " remaining";
-          }
-        }, 1000);
-      }
     </script>
   </body>
 </html>`;
