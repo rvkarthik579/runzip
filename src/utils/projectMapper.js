@@ -1,18 +1,3 @@
-export function mapProjectRow(row) {
-  if (!row) return null;
-
-  return {
-    id: row.id,
-    shareToken: row.share_token,
-    name: row.name,
-    summary: row.summary,
-    content: row.content,
-    metadata: JSON.parse(row.metadata || "{}"),
-    createdAt: row.created_at,
-    updatedAt: row.updated_at
-  };
-}
-
 export function sanitizeProjectPayload(payload = {}) {
   const name = (payload.name || "Untitled Project").toString().trim().slice(0, 100);
   const summary = (payload.summary || "").toString().trim().slice(0, 280);

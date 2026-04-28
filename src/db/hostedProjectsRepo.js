@@ -4,6 +4,8 @@ import path from "node:path";
 const dataDir = path.join(process.cwd(), "data");
 const dataPath = path.join(dataDir, "hostedProjects.json");
 
+let cache = null;
+
 function ensureStore() {
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
@@ -14,24 +16,28 @@ function ensureStore() {
   }
 }
 
-function readStore() {
-  ensureStore();
-  const raw = fs.readFileSync(dataPath, "utf8");
-  const parsed = JSON.parse(raw || "{\"projects\":[]}");
+function loadStore() {
+  if (cache) return cache;
 
-  if (!Array.isArray(parsed.projects)) {
-    return { projects: [] };
+  ensureStore();
+  try {
+    const raw = fs.readFileSync(dataPath, "utf8");
+    const parsed = JSON.parse(raw || '{"projects":[]}');
+    cache = Array.isArray(parsed.projects) ? parsed : { projects: [] };
+  } catch {
+    cache = { projects: [] };
   }
 
-  return parsed;
+  return cache;
 }
 
-function writeStore(store) {
-  fs.writeFileSync(dataPath, JSON.stringify(store, null, 2), "utf8");
+function persist() {
+  ensureStore();
+  fs.writeFileSync(dataPath, JSON.stringify(cache, null, 2), "utf8");
 }
 
 export function saveHostedProject(project) {
-  const store = readStore();
+  const store = loadStore();
   const index = store.projects.findIndex((item) => item.id === project.id);
   const nextProject = {
     id: project.id,
@@ -46,12 +52,12 @@ export function saveHostedProject(project) {
     store.projects[index] = nextProject;
   }
 
-  writeStore(store);
+  persist();
   return nextProject;
 }
 
 export function getHostedProjectById(id) {
-  const store = readStore();
+  const store = loadStore();
   return store.projects.find((item) => item.id === id) || null;
 }
 
@@ -61,13 +67,13 @@ export function removeHostedProjectsByIds(ids) {
     return 0;
   }
 
-  const store = readStore();
+  const store = loadStore();
   const before = store.projects.length;
   store.projects = store.projects.filter((item) => !idSet.has(item.id));
   const removed = before - store.projects.length;
 
   if (removed > 0) {
-    writeStore(store);
+    persist();
   }
 
   return removed;

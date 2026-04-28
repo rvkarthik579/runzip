@@ -2,8 +2,6 @@
 
 Upload a ZIP. Get a live URL + QR code instantly. No login required.
 
-[🚀 Try it live →](https://runzip-production.up.railway.app/)
-
 ## What is RunZip?
 
 RunZip is a free tool that lets you share any static web project instantly. Drop a ZIP file, get a shareable link and QR code in seconds.
@@ -50,10 +48,6 @@ Open http://localhost:4000
 - **QR generation** — qrcode
 - **Frontend** — Vanilla JS, CSS
 - **Desktop** — Electron
-
-## Deploy
-
-Live at: [https://runzip-production.up.railway.app/](https://runzip-production.up.railway.app/)
 
 ## License
 

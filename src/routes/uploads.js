@@ -7,6 +7,7 @@ import unzipper from "unzipper";
 import QRCode from "qrcode";
 import { getBaseUrl } from "../utils/requestUtils.js";
 import { saveHostedProject } from "../db/hostedProjectsRepo.js";
+import { detectEntryHtml } from "../utils/fileUtils.js";
 
 const uploadsRouter = Router();
 
@@ -77,78 +78,6 @@ async function extractZipSafely(zipPath, projectDir) {
   }
 }
 
-function listHtmlFiles(projectDir) {
-  const htmlFiles = [];
-  const queue = [projectDir];
-
-  while (queue.length > 0) {
-    const current = queue.shift();
-    const entries = fs
-      .readdirSync(current, { withFileTypes: true })
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    for (const entry of entries) {
-      const entryPath = path.join(current, entry.name);
-      if (entry.isDirectory()) {
-        queue.push(entryPath);
-        continue;
-      }
-
-      if (entry.isFile() && entry.name.toLowerCase().endsWith(".html")) {
-        htmlFiles.push(entryPath);
-      }
-    }
-  }
-
-  return htmlFiles;
-}
-
-function inferSearchRoot(projectDir) {
-  let current = projectDir;
-
-  // Many ZIPs include one wrapper folder; unwrap directory-only chains.
-  while (true) {
-    const entries = fs.readdirSync(current, { withFileTypes: true });
-    const files = entries.filter((entry) => entry.isFile());
-    const dirs = entries.filter((entry) => entry.isDirectory());
-
-    if (files.length > 0 || dirs.length !== 1) {
-      return current;
-    }
-
-    current = path.join(current, dirs[0].name);
-  }
-}
-
-function detectEntryHtml(projectDir) {
-  const searchRoot = inferSearchRoot(projectDir);
-  const allHtmlFiles = listHtmlFiles(searchRoot);
-  if (allHtmlFiles.length === 0) {
-    return null;
-  }
-
-  const relSet = new Set(
-    allHtmlFiles.map((absPath) => path.relative(searchRoot, absPath).replace(/\\/g, "/").toLowerCase())
-  );
-
-  const priorityCandidates = [
-    "index.html",
-    "dist/index.html",
-    "build/index.html",
-    "public/index.html",
-    "src/index.html"
-  ];
-
-  for (const candidate of priorityCandidates) {
-    if (relSet.has(candidate)) {
-      return path.join(searchRoot, candidate);
-    }
-  }
-
-  // Fallback for AI-generated structures: serve the first discovered HTML file.
-  return allHtmlFiles[0];
-}
-
 uploadsRouter.post("/zip", upload.single("projectZip"), async (req, res) => {
   const uploadedFile = req.file;
   if (!uploadedFile) {
@@ -182,7 +111,7 @@ uploadsRouter.post("/zip", upload.single("projectZip"), async (req, res) => {
       entryFile: entryFileRelative
     });
 
-    console.log(`Detected entry file: ${indexPath}`);
+    console.log(`Project ${projectId}: entry file detected at ${entryFileRelative}`);
 
     const shareUrl = `${getBaseUrl(req)}/p/${projectId}/`;
     const qrCodeDataUrl = await QRCode.toDataURL(shareUrl, {

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="RunZip">
-  <rect x="0" y="0" width="64" height="64" rx="14" fill="#070708" />
-  <path d="M14 10C14 8.9 14.9 8 16 8H37L50 21V50C50 51.1 49.1 52 48 52H16C14.9 52 14 51.1 14 50V10Z" fill="#111116" stroke="#00d4ff" stroke-width="2"/>
-  <path d="M37 8V21H50" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linejoin="round"/>
-  <text x="23" y="38" font-family="monospace" font-size="13" font-weight="700" fill="#00d4ff" letter-spacing="0.8">RZ</text>
+  <rect x="0" y="0" width="64" height="64" rx="14" fill="#4f46e5" />
+  <path d="M14 10C14 8.9 14.9 8 16 8H37L50 21V50C50 51.1 49.1 52 48 52H16C14.9 52 14 51.1 14 50V10Z" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="1.5"/>
+  <path d="M37 8V21H50" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+  <text x="23" y="39" font-family="system-ui, sans-serif" font-size="14" font-weight="700" fill="#fff" letter-spacing="0.5">RZ</text>
 </svg>

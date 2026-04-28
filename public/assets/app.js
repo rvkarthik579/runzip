@@ -1,4 +1,4 @@
-﻿const state = {
+const state = {
   selectedFile: null,
   projectId: null,
   shareUrl: "",
@@ -13,7 +13,6 @@
 
 const els = {
   saveStatus: document.getElementById("saveStatus"),
-  topUploadBtn: document.getElementById("topUploadBtn"),
   dropzone: document.getElementById("dropzone"),
   zipInput: document.getElementById("zipInput"),
   uploadBtn: document.getElementById("uploadBtn"),
@@ -21,12 +20,9 @@ const els = {
   openFullBtn: document.getElementById("openFullBtn"),
   playBtn: document.getElementById("playBtn"),
   shareUrlInput: document.getElementById("shareUrlInput"),
-  projectIdValue: document.getElementById("projectIdValue"),
-  metaStatus: document.getElementById("metaStatus"),
   qrImage: document.getElementById("qrImage"),
   qrBlock: document.getElementById("qrBlock"),
   previewFrame: document.getElementById("previewFrame"),
-  previewStage: document.getElementById("previewStage"),
   previewEmpty: document.getElementById("previewEmpty"),
   frameLoading: document.getElementById("frameLoading"),
   iframeWrap: document.getElementById("iframeWrap"),
@@ -44,29 +40,30 @@ const els = {
   uploadProgressText: document.getElementById("uploadProgressText")
 };
 
+// ── Helpers ──
+
 function showToast(message) {
   if (!els.toast) return;
   els.toast.textContent = message;
   els.toast.classList.add("show");
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => els.toast.classList.remove("show"), 2400);
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => els.toast.classList.remove("show"), 2400);
 }
 
 function setStatus(text, active = false) {
   if (!els.saveStatus) return;
-  els.saveStatus.innerHTML = `<span class="status-dot"></span><span id="statusText">${text}</span>`;
+  const dot = els.saveStatus.querySelector(".status-dot");
+  const label = els.saveStatus.querySelector("#statusText");
+  if (label) label.textContent = text;
   els.saveStatus.classList.toggle("active", active);
 }
 
 function setSelectedFile(file) {
   state.selectedFile = file;
   if (!file) {
-    els.uploadCard?.classList.remove("file-ready");
     els.fileBadge?.classList.remove("visible");
     return;
   }
-
-  els.uploadCard?.classList.add("file-ready");
   const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
   els.fileBadgeName.textContent = file.name;
   els.fileBadgeSize.textContent = `${sizeMb} MB`;
@@ -76,9 +73,11 @@ function setSelectedFile(file) {
 function isValidZip(file) {
   if (!file) return "Select a ZIP file first.";
   if (!(file.name || "").toLowerCase().endsWith(".zip")) return "Only .zip files are accepted.";
-  if (file.size > 10 * 1024 * 1024) return "ZIP exceeds 10MB size limit.";
+  if (file.size > 10 * 1024 * 1024) return "ZIP exceeds 10 MB limit.";
   return null;
 }
+
+// ── Preview Mode ──
 
 function applyMode(mode) {
   if (!["desktop", "tablet", "phone"].includes(mode)) return;
@@ -87,13 +86,8 @@ function applyMode(mode) {
   els.iframeWrap.classList.remove("desktop", "tablet", "phone");
   els.iframeWrap.classList.add(mode);
 
-  if (mode === "tablet") {
-    els.previewFrame.style.minHeight = "580px";
-  } else if (mode === "phone") {
-    els.previewFrame.style.minHeight = "560px";
-  } else {
-    els.previewFrame.style.minHeight = "460px";
-  }
+  const heights = { desktop: "460px", tablet: "580px", phone: "560px" };
+  els.previewFrame.style.minHeight = heights[mode];
 
   document.querySelectorAll(".mode-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.mode === mode);
@@ -105,18 +99,13 @@ function applyMode(mode) {
 }
 
 function focusPreviewFrame() {
-  try {
-    els.previewFrame.focus();
-  } catch {
-    // ignore focus errors
-  }
+  try { els.previewFrame.focus(); } catch { /* ignore */ }
 }
 
-function proxyKeyboardEvent(_, event) {
+function handleKeyboardProxy(event) {
   if (!state.previewKeyboardArmed || !state.previewUrl) return;
-  const activeTag = (document.activeElement?.tagName || "").toUpperCase();
-  if (["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(activeTag)) return;
-
+  const tag = (document.activeElement?.tagName || "").toUpperCase();
+  if (["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(tag)) return;
   focusPreviewFrame();
   if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(event.code)) {
     event.preventDefault();
@@ -125,135 +114,24 @@ function proxyKeyboardEvent(_, event) {
 
 function loadPreviewFrame(url) {
   els.previewFrame.src = "about:blank";
-  requestAnimationFrame(() => {
-    els.previewFrame.src = url;
-  });
+  requestAnimationFrame(() => { els.previewFrame.src = url; });
 }
 
 function runtimeProjectUrl() {
   if (!state.previewUrl) return "";
-  const base = state.previewUrl.endsWith("/") ? state.previewUrl.slice(0, -1) : state.previewUrl;
+  const base = state.previewUrl.replace(/\/$/, "");
   return `${base}/__runzip_project`;
 }
 
-function showPreview() {
-  els.previewEmpty.style.display = "none";
-  els.iframeOuter.style.display = "flex";
-  els.frameLoading.classList.add("visible");
-}
+// ── Upload Progress ──
 
-function showUploadPreview() {
-  els.projectIdValue.textContent = "Loading...";
-  els.metaStatus.textContent = "Uploading...";
-  els.qrBlock.style.display = "none";
-  els.qrImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23f8fafc' width='100' height='100'/%3E%3C/svg%3E";
-  showPreview();
-}
-
-function paintUploadResult(payload) {
-  state.projectId = payload.project.id;
-  state.shareUrl = payload.project.shareUrl;
-  state.previewUrl = payload.project.previewUrl;
-  state.qrCodeDataUrl = payload.qrCodeDataUrl;
-
-  els.uploadBtn.style.background = "white";
-  els.uploadBtn.style.color = "#2563eb";
-  els.uploadBtn.style.border = "2px solid #2563eb";
-
-  els.dropzone.style.minHeight = "70px";
-  els.dropzone.style.padding = "14px 20px";
-  els.dropzone.style.flexDirection = "row";
-  els.dropzone.style.justifyContent = "center";
-  els.dropzone.style.gap = "10px";
-
-  const dzIcon = els.dropzone.querySelector(".dz-icon");
-  if (dzIcon) dzIcon.style.display = "none";
-
-  const hint = document.getElementById("qrPreviewHint");
-  if (hint) hint.style.display = "none";
-
-  const step2 = document.getElementById("step2Section");
-  const step3 = document.getElementById("step3Section");
-  if (step2) step2.style.display = "block";
-  if (step3) step3.style.display = "block";
-
-  els.resultSection.classList.add("show");
-
-  els.projectIdValue.textContent = state.projectId;
-  els.metaStatus.textContent = "Hosted";
-  els.shareUrlInput.value = state.shareUrl;
-  els.qrBlock.style.display = "flex";
-  els.qrImage.src = state.qrCodeDataUrl;
-
-  els.copyLinkBtn.disabled = false;
-  els.openFullBtn.disabled = false;
-  els.playBtn.disabled = false;
-
-  loadPreviewFrame(`${runtimeProjectUrl()}?t=${Date.now()}`);
-  setStatus("Hosted", true);
-  initRoom(state.projectId);
-}
-
-function bootFromPreviewUrl() {
-  const match = window.location.pathname.match(/^\/preview\/([A-Za-z0-9_-]+)$/);
-  if (!match) return;
-
-  const projectId = match[1];
-  state.projectId = projectId;
-  state.previewUrl = `/p/${projectId}/`;
-  state.shareUrl = `${window.location.origin}/p/${projectId}/`;
-
-  els.projectIdValue.textContent = projectId;
-  els.metaStatus.textContent = "Loaded";
-  els.shareUrlInput.value = state.shareUrl;
-  els.qrBlock.style.display = "flex";
-
-  const hint = document.getElementById("qrPreviewHint");
-  if (hint) hint.style.display = "none";
-
-  const step2 = document.getElementById("step2Section");
-  const step3 = document.getElementById("step3Section");
-  if (step2) step2.style.display = "block";
-  if (step3) step3.style.display = "block";
-
-  els.resultSection.classList.add("show");
-  els.copyLinkBtn.disabled = false;
-  els.openFullBtn.disabled = false;
-  els.playBtn.disabled = false;
-  els.uploadBtn.textContent = "↑ Upload Another Project";
-
-  showPreview();
-  loadPreviewFrame(`${runtimeProjectUrl()}?t=${Date.now()}`);
-  setStatus("Preview loaded", true);
-  if (state.projectId) initRoom(state.projectId);
-}
-
-function openFullProject() {
-  const runtimeUrl = runtimeProjectUrl();
-  if (!runtimeUrl) {
-    showToast("No hosted project available yet.");
-    return;
-  }
-  window.open(runtimeUrl, "_blank", "noopener,noreferrer");
-}
-
-function playInNewTab() {
-  const runtimeUrl = runtimeProjectUrl();
-  if (!runtimeUrl) {
-    showToast("No project uploaded yet.");
-    return;
-  }
-  const win = window.open(runtimeUrl, "_blank", "noopener,noreferrer");
-  if (!win) showToast("Popup blocked - allow popups for this site.");
-}
-
-function setUploadProgress(value, text = "Uploading...") {
+function setUploadProgress(value, text = "Uploading…") {
   if (!els.uploadProgress) return;
-  const clamped = Math.max(0, Math.min(100, value));
-  state.uploadProgress = clamped;
+  const v = Math.max(0, Math.min(100, value));
+  state.uploadProgress = v;
   els.uploadProgress.classList.add("visible");
-  els.uploadProgressFill.style.width = `${clamped}%`;
-  els.uploadProgressPercent.textContent = `${Math.floor(clamped)}%`;
+  els.uploadProgressFill.style.width = `${v}%`;
+  els.uploadProgressPercent.textContent = `${Math.floor(v)}%`;
   els.uploadProgressText.textContent = text;
 }
 
@@ -265,57 +143,82 @@ function clearUploadProgress() {
   els.uploadProgress.classList.remove("visible");
   els.uploadProgressFill.style.width = "0%";
   els.uploadProgressPercent.textContent = "0%";
-  els.uploadProgressText.textContent = "Uploading...";
 }
 
 function startFakeProgress() {
   clearInterval(state.uploadProgressTimer);
   state.uploadProgress = 0;
-  setUploadProgress(3, "Uploading...");
-
+  setUploadProgress(3);
   state.uploadProgressTimer = setInterval(() => {
     if (!state.uploading) return;
-    const next = state.uploadProgress + (state.uploadProgress < 70 ? 6 : state.uploadProgress < 90 ? 2 : 0.6);
-    setUploadProgress(Math.min(94, next), "Uploading...");
+    const p = state.uploadProgress;
+    const step = p < 70 ? 6 : p < 90 ? 2 : 0.6;
+    setUploadProgress(Math.min(94, p + step));
   }, 220);
 }
 
-async function uploadZip() {
-  let uploadSucceeded = false;
+// ── Upload Flow ──
 
+function showPreview() {
+  els.previewEmpty.style.display = "none";
+  els.iframeOuter.classList.add("show");
+  els.frameLoading.classList.add("visible");
+}
+
+function showResult(payload) {
+  state.projectId = payload.project.id;
+  state.shareUrl = payload.project.shareUrl;
+  state.previewUrl = payload.project.previewUrl;
+  state.qrCodeDataUrl = payload.qrCodeDataUrl;
+
+  const step2 = document.getElementById("step2Section");
+  const step3 = document.getElementById("step3Section");
+  if (step2) step2.style.display = "block";
+  if (step3) step3.style.display = "block";
+
+  els.resultSection.classList.add("show");
+  els.shareUrlInput.value = state.shareUrl;
+  els.qrBlock.style.display = "flex";
+  els.qrImage.src = state.qrCodeDataUrl;
+  els.copyLinkBtn.disabled = false;
+  els.openFullBtn.disabled = false;
+  els.playBtn.disabled = false;
+
+  loadPreviewFrame(`${runtimeProjectUrl()}?t=${Date.now()}`);
+  setStatus("Hosted", true);
+  initRoom(state.projectId);
+}
+
+async function uploadZip() {
   const err = isValidZip(state.selectedFile);
-  if (err) {
-    showToast(err);
-    return;
-  }
+  if (err) { showToast(err); return; }
   if (state.uploading) return;
 
+  let success = false;
   state.uploading = true;
   els.uploadBtn.disabled = true;
-  els.uploadBtn.classList.add("loading");
-  els.uploadBtn.textContent = "Uploading...";
+  els.uploadBtn.textContent = "Uploading…";
   els.copyLinkBtn.disabled = true;
   els.openFullBtn.disabled = true;
   els.playBtn.disabled = true;
-  setStatus("Uploading...");
+  setStatus("Uploading…");
 
-  showUploadPreview();
+  showPreview();
   startFakeProgress();
 
   const formData = new FormData();
   formData.append("projectZip", state.selectedFile);
 
   try {
-    const response = await fetch("/api/uploads/zip", { method: "POST", body: formData });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.error || "Upload failed");
+    const res = await fetch("/api/uploads/zip", { method: "POST", body: formData });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || "Upload failed");
 
-    setUploadProgress(100, "Uploaded");
-    paintUploadResult(body);
-    uploadSucceeded = true;
-    showToast("Uploaded! Share link is ready.");
+    setUploadProgress(100, "Done");
+    showResult(body);
+    success = true;
+    showToast("Uploaded — share link is ready.");
     history.replaceState(null, "", `/preview/${state.projectId}`);
-
     setTimeout(() => clearUploadProgress(), 500);
   } catch (error) {
     setStatus("Upload failed");
@@ -325,70 +228,85 @@ async function uploadZip() {
   } finally {
     state.uploading = false;
     clearInterval(state.uploadProgressTimer);
-    state.uploadProgressTimer = null;
     els.uploadBtn.disabled = false;
-    els.uploadBtn.classList.remove("loading");
-    els.uploadBtn.textContent = uploadSucceeded ? "↑ Upload Another Project" : "Upload ZIP";
+    els.uploadBtn.textContent = success ? "Upload another" : "Upload ZIP";
   }
 }
 
 async function copyShareLink() {
-  if (!state.shareUrl) {
-    showToast("No share link yet.");
-    return;
-  }
+  if (!state.shareUrl) { showToast("No link yet."); return; }
   try {
     await navigator.clipboard.writeText(state.shareUrl);
     showToast("Link copied!");
-  } catch {
-    showToast("Clipboard access denied.");
-  }
+  } catch { showToast("Clipboard access denied."); }
 }
 
+function openFullProject() {
+  const url = runtimeProjectUrl();
+  if (!url) { showToast("No project available."); return; }
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function playInNewTab() {
+  const url = runtimeProjectUrl();
+  if (!url) { showToast("No project uploaded."); return; }
+  const win = window.open(url, "_blank", "noopener,noreferrer");
+  if (!win) showToast("Popup blocked — allow popups for this site.");
+}
+
+// ── Boot from URL ──
+
+function bootFromPreviewUrl() {
+  const match = window.location.pathname.match(/^\/preview\/([A-Za-z0-9_-]+)$/);
+  if (!match) return;
+
+  const projectId = match[1];
+  state.projectId = projectId;
+  state.previewUrl = `/p/${projectId}/`;
+  state.shareUrl = `${window.location.origin}/p/${projectId}/`;
+
+  const step2 = document.getElementById("step2Section");
+  const step3 = document.getElementById("step3Section");
+  if (step2) step2.style.display = "block";
+  if (step3) step3.style.display = "block";
+
+  els.resultSection.classList.add("show");
+  els.shareUrlInput.value = state.shareUrl;
+  els.qrBlock.style.display = "flex";
+  els.copyLinkBtn.disabled = false;
+  els.openFullBtn.disabled = false;
+  els.playBtn.disabled = false;
+  els.uploadBtn.textContent = "Upload another";
+
+  showPreview();
+  loadPreviewFrame(`${runtimeProjectUrl()}?t=${Date.now()}`);
+  setStatus("Preview loaded", true);
+  initRoom(state.projectId);
+}
+
+// ── Event Wiring ──
+
 function wireDropzone() {
-  const on = () => els.dropzone.classList.add("drag-over");
-  const off = () => els.dropzone.classList.remove("drag-over");
-
-  els.dropzone.addEventListener("dragenter", (e) => {
+  const dz = els.dropzone;
+  dz.addEventListener("dragenter", (e) => { e.preventDefault(); dz.classList.add("drag-over"); });
+  dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag-over"); });
+  dz.addEventListener("dragleave", () => dz.classList.remove("drag-over"));
+  dz.addEventListener("drop", (e) => {
     e.preventDefault();
-    on();
-  });
-
-  els.dropzone.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    on();
-  });
-
-  els.dropzone.addEventListener("dragleave", off);
-
-  els.dropzone.addEventListener("drop", (e) => {
-    e.preventDefault();
-    off();
+    dz.classList.remove("drag-over");
     const [f] = e.dataTransfer?.files || [];
-    if (f) {
-      setSelectedFile(f);
-      uploadZip().catch((err) => showToast(err.message || "Upload failed"));
-    }
+    if (f) { setSelectedFile(f); uploadZip(); }
   });
 }
 
 function wireEvents() {
-  els.topUploadBtn?.addEventListener("click", (e) => {
-    e.preventDefault();
-    els.dropzone?.scrollIntoView({ behavior: "smooth", block: "center" });
-    setTimeout(() => els.zipInput?.click(), 300);
-  });
-
   els.zipInput.addEventListener("change", (e) => {
     const [f] = e.target.files || [];
-    if (f) {
-      setSelectedFile(f);
-      uploadZip().catch((err) => showToast(err.message || "Upload failed"));
-    }
+    if (f) { setSelectedFile(f); uploadZip(); }
   });
 
-  els.uploadBtn.addEventListener("click", () => uploadZip().catch((e) => showToast(e.message)));
-  els.copyLinkBtn.addEventListener("click", () => copyShareLink().catch(() => showToast("Copy failed")));
+  els.uploadBtn.addEventListener("click", () => uploadZip());
+  els.copyLinkBtn.addEventListener("click", () => copyShareLink());
   els.openFullBtn.addEventListener("click", openFullProject);
   els.playBtn.addEventListener("click", playInNewTab);
 
@@ -401,28 +319,22 @@ function wireEvents() {
     state.previewKeyboardArmed = true;
     focusPreviewFrame();
   });
-
   els.previewFrame.addEventListener("load", () => {
     els.frameLoading.classList.remove("visible");
     state.previewKeyboardArmed = true;
     focusPreviewFrame();
   });
-
   els.previewFrame.addEventListener("error", () => {
     els.frameLoading.classList.remove("visible");
   });
 
-  document.addEventListener("keydown", (e) => proxyKeyboardEvent("keydown", e));
-  document.addEventListener("keyup", (e) => proxyKeyboardEvent("keyup", e));
+  document.addEventListener("keydown", handleKeyboardProxy);
+  document.addEventListener("keyup", handleKeyboardProxy);
 
   wireDropzone();
 }
 
-function boot() {
-  applyMode("desktop");
-  wireEvents();
-  bootFromPreviewUrl();
-}
+// ── Socket.IO ──
 
 let socket = null;
 
@@ -443,14 +355,12 @@ function initRoom(projectId) {
     applyMode(mode);
     updateViewerCount(viewers);
   });
-
-  socket.on("mode-changed", ({ mode }) => {
-    applyMode(mode);
-  });
-
-  socket.on("viewer-count", ({ viewers }) => {
-    updateViewerCount(viewers);
-  });
+  socket.on("mode-changed", ({ mode }) => applyMode(mode));
+  socket.on("viewer-count", ({ viewers }) => updateViewerCount(viewers));
 }
 
-boot();
+// ── Init ──
+
+applyMode("desktop");
+wireEvents();
+bootFromPreviewUrl();

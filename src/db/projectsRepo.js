@@ -5,6 +5,8 @@ import { nanoid } from "nanoid";
 const dataDir = path.join(process.cwd(), "data");
 const dataPath = path.join(dataDir, "projects.json");
 
+let cache = null;
+
 function ensureStore() {
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
@@ -15,24 +17,28 @@ function ensureStore() {
   }
 }
 
-function readStore() {
-  ensureStore();
-  const raw = fs.readFileSync(dataPath, "utf8");
-  const parsed = JSON.parse(raw || "{\"projects\":[]}");
+function loadStore() {
+  if (cache) return cache;
 
-  if (!Array.isArray(parsed.projects)) {
-    return { projects: [] };
+  ensureStore();
+  try {
+    const raw = fs.readFileSync(dataPath, "utf8");
+    const parsed = JSON.parse(raw || '{"projects":[]}');
+    cache = Array.isArray(parsed.projects) ? parsed : { projects: [] };
+  } catch {
+    cache = { projects: [] };
   }
 
-  return parsed;
+  return cache;
 }
 
-function writeStore(store) {
-  fs.writeFileSync(dataPath, JSON.stringify(store, null, 2), "utf8");
+function persist() {
+  ensureStore();
+  fs.writeFileSync(dataPath, JSON.stringify(cache, null, 2), "utf8");
 }
 
 export function createProject(payload) {
-  const store = readStore();
+  const store = loadStore();
   const now = new Date().toISOString();
   const project = {
     id: nanoid(12),
@@ -46,17 +52,17 @@ export function createProject(payload) {
   };
 
   store.projects.push(project);
-  writeStore(store);
+  persist();
   return project;
 }
 
 export function getProjectById(id) {
-  const store = readStore();
+  const store = loadStore();
   return store.projects.find((item) => item.id === id) || null;
 }
 
 export function updateProjectById(id, payload) {
-  const store = readStore();
+  const store = loadStore();
   const index = store.projects.findIndex((item) => item.id === id);
   if (index === -1) {
     return null;
@@ -73,12 +79,12 @@ export function updateProjectById(id, payload) {
   };
 
   store.projects[index] = updated;
-  writeStore(store);
+  persist();
   return updated;
 }
 
 export function listRecentProjects(limit = 12) {
-  const store = readStore();
+  const store = loadStore();
   return [...store.projects]
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, limit)

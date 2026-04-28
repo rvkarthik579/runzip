@@ -29,13 +29,15 @@ export function getBaseUrl(req) {
     return `${protocol}://${host}`;
   }
 
-  const lanIp = firstLanIpv4Address();
-  if (!lanIp) {
-    return `${protocol}://${host}`;
+  if (process.env.ALLOW_LAN_SHARING === 'true') {
+    const lanIp = firstLanIpv4Address();
+    if (lanIp) {
+      const port = localhostMatch[2] || "";
+      return `${protocol}://${lanIp}${port}`;
+    }
   }
 
-  const port = localhostMatch[2] || "";
-  return `${protocol}://${lanIp}${port}`;
+  return `${protocol}://${host}`;
 }
 
 export function readShareToken(req) {
