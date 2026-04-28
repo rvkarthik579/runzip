@@ -50,58 +50,6 @@ export function renderHostedErrorPage(message) {
   </head>
   <body>
     <div class="shell">
-/**
- * Shared inline styles for server-rendered pages (share landing, error).
- * Uses the same design tokens as the main frontend.
- */
-const BASE_STYLES = `
-  :root {
-    --bg: #fafafa;
-    --surface: #ffffff;
-    --border: #e5e7eb;
-    --accent: #4f46e5;
-    --accent-hover: #4338ca;
-    --text: #18181b;
-    --text-secondary: #52525b;
-    --text-muted: #a1a1aa;
-    --radius: 8px;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; }
-  body {
-    font-family: Inter, system-ui, -apple-system, sans-serif;
-    font-size: 14px; line-height: 1.5;
-    color: var(--text); background: var(--bg);
-    -webkit-font-smoothing: antialiased;
-  }
-`;
-
-export function renderHostedErrorPage(message) {
-  const safeMessage = String(message || "Project not found.").replace(/[<>]/g, "");
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RunZip — Project Unavailable</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-      ${BASE_STYLES}
-      .shell {
-        max-width: 520px; margin: 80px auto;
-        padding: 24px;
-        background: var(--surface); border: 1px solid var(--border);
-        border-radius: var(--radius);
-      }
-      h1 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-      p { color: var(--text-secondary); font-size: 14px; margin-bottom: 6px; }
-      a { color: var(--accent); text-decoration: none; font-weight: 500; }
-      a:hover { text-decoration: underline; }
-    </style>
-  </head>
-  <body>
-    <div class="shell">
       <h1>Project unavailable</h1>
       <p>${safeMessage}</p>
       <p><a href="/">← Back to RunZip</a></p>
