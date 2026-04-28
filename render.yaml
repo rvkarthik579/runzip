@@ -9,4 +9,4 @@ services:
       - key: NODE_VERSION
         value: 20
       - key: ALLOW_LAN_SHARING
-        value: false
+        value: "true"
