@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: runzip
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: ALLOW_LAN_SHARING
+        value: false
