@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { removeHostedProjectsByIds } from "../db/hostedProjectsRepo.js";
 
-const CLEANUP_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
-const PROJECT_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
+const CLEANUP_INTERVAL_MS = 1 * 60 * 1000; // 1 minute
+const PROJECT_MAX_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
 export function cleanupOldHostedProjects(projectsRoot) {
   let entries;
