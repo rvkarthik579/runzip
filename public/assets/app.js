@@ -17,6 +17,7 @@ const els = {
   zipInput: document.getElementById("zipInput"),
   uploadBtn: document.getElementById("uploadBtn"),
   copyLinkBtn: document.getElementById("copyLinkBtn"),
+  expirationTimer: document.getElementById("expirationTimer"),
   openFullBtn: document.getElementById("openFullBtn"),
   playBtn: document.getElementById("playBtn"),
   shareUrlInput: document.getElementById("shareUrlInput"),
@@ -187,6 +188,29 @@ function showResult(payload) {
   loadPreviewFrame(`${runtimeProjectUrl()}?t=${Date.now()}`);
   setStatus("Hosted", true);
   initRoom(state.projectId);
+
+  if (payload.project.expiresAt) {
+    const expiresAt = new Date(payload.project.expiresAt).getTime();
+    els.expirationTimer.style.display = "inline-block";
+    
+    // Clear any existing timer
+    if (state.countdownTimer) clearInterval(state.countdownTimer);
+    
+    state.countdownTimer = setInterval(() => {
+      const now = Date.now();
+      const diff = expiresAt - now;
+      if (diff <= 0) {
+        clearInterval(state.countdownTimer);
+        els.expirationTimer.textContent = "Expired";
+        els.expirationTimer.style.color = "#dc2626";
+        els.expirationTimer.style.background = "#fee2e2";
+      } else {
+        const m = Math.floor(diff / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        els.expirationTimer.textContent = `${m}:${s.toString().padStart(2, "0")} remaining`;
+      }
+    }, 1000);
+  }
 }
 
 async function uploadZip() {

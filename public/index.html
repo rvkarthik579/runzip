@@ -529,7 +529,10 @@
             <div class="result-divider"></div>
 
             <div id="step2Section" style="display:none">
-              <div class="result-label">Share link</div>
+              <div class="result-label" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Share link</span>
+                <span id="expirationTimer" style="display:none; font-family:var(--font-mono); font-size:12px; font-weight:600; color:#d97706; background:#fef3c7; padding:2px 8px; border-radius:12px;"></span>
+              </div>
               <div class="url-row" style="margin-top:6px">
                 <input id="shareUrlInput" class="url-input mono" type="text" readonly placeholder="Link appears here…" />
                 <button id="copyLinkBtn" class="btn-secondary" disabled>Copy</button>

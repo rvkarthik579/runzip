@@ -123,7 +123,8 @@ uploadsRouter.post("/zip", upload.single("projectZip"), async (req, res) => {
       project: {
         id: projectId,
         shareUrl,
-        previewUrl: `/p/${projectId}/`
+        previewUrl: `/p/${projectId}/`,
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString()
       },
       qrCodeDataUrl
     });

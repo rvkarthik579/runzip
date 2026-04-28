@@ -168,10 +168,16 @@ app.get("/p/:projectId", (req, res) => {
   }
 
   const shareUrl = `${getBaseUrl(req)}/p/${projectId}/`;
+  
+  let expiresAt = null;
+  const projectMeta = getHostedProjectById(projectId);
+  if (projectMeta && projectMeta.updatedAt) {
+    expiresAt = new Date(new Date(projectMeta.updatedAt).getTime() + 10 * 60 * 1000).toISOString();
+  }
 
   QRCode.toDataURL(shareUrl, { width: 280, margin: 1 })
     .then((qrCodeDataUrl) => {
-      res.type("html").send(renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl }));
+      res.type("html").send(renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl, expiresAt }));
     })
     .catch(() => {
       res.status(500).type("html").send(
