@@ -55,6 +55,7 @@ export function renderHostedErrorPage(message) {
       gtag('js', new Date());
       gtag('config', 'G-R0H94R9VCL');
     </script>
+<meta name="google-site-verification" content="SMNmgMCubZBR08U5ePVbK0UtByf4PaGHoZ525HKxLqE" />
   </head>
   <body>
     <div class="shell">
@@ -145,6 +146,7 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl }) {
       gtag('js', new Date());
       gtag('config', 'G-R0H94R9VCL');
     </script>
+<meta name="google-site-verification" content="SMNmgMCubZBR08U5ePVbK0UtByf4PaGHoZ525HKxLqE" />
   </head>
   <body>
     <main class="shell">
@@ -184,3 +186,4 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl }) {
   </body>
 </html>`;
 }
+
