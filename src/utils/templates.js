@@ -47,6 +47,14 @@ export function renderHostedErrorPage(message) {
       a { color: var(--accent); text-decoration: none; font-weight: 500; }
       a:hover { text-decoration: underline; }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R0H94R9VCL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-R0H94R9VCL');
+    </script>
   </head>
   <body>
     <div class="shell">
@@ -129,6 +137,14 @@ export function renderShareLandingPage({ projectId, shareUrl, qrCodeDataUrl }) {
         font-size: 11px; color: var(--text-muted);
       }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R0H94R9VCL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-R0H94R9VCL');
+    </script>
   </head>
   <body>
     <main class="shell">
